@@ -1,0 +1,16 @@
+{
+  "name": "airdrop",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@solana-program/system": "^0.8.0",
+    "@solana/kit": "^3.0.3",
+    "@types/node": "^24.6.0",
+    "bs58": "^6.0.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.6"
+  }
+}

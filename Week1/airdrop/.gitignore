@@ -1,3 +1,7 @@
-Readme.md
+imp.md
 dev-wallet.json
 turbine-wallet.json
+
+node_modules/
+dist/
+.env

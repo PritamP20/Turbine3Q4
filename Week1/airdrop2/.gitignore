@@ -1,0 +1,9 @@
+/target
+Cargo.lock   # optional for libraries, keep if app
+
+
+*.json
+.env
+
+
+imp.md

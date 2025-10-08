@@ -9,7 +9,7 @@ const connection = new Connection("https://api.devnet.solana.com", commitment);
 
 (async () => {
   try {
-    console.log("🚀 Creating new token mint...");
+    console.log(" Creating new token mint...");
 
     const mint = await createMint(
       connection,      
@@ -19,8 +19,8 @@ const connection = new Connection("https://api.devnet.solana.com", commitment);
       6               
     );
 
-    console.log(`✅ Mint created successfully! Mint address: ${mint.toBase58()}`);
+    console.log(` Mint created successfully! Mint address: ${mint.toBase58()}`);
   } catch (error) {
-    console.error(`❌ Oops, something went wrong: ${error}`);
+    console.error(` Oops, something went wrong: ${error}`);
   }
 })();

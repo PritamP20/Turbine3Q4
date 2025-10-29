@@ -11,8 +11,8 @@ const umi = createUmi(RPC_ENDPOINT);
 let keypair = umi.eddsa.createKeypairFromSecretKey(new Uint8Array(wallet));
 const myKeypairSigner = createSignerFromKeypair(umi, keypair);
 umi.use(signerIdentity(myKeypairSigner));
-umi.use(mplTokenMetadata())
-
+umi.use(mplTokenMetadata()
+)
 const mint = generateSigner(umi);
 
 (async () => {

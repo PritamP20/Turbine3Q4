@@ -1,0 +1,49 @@
+#include <string>
+#include <fstrean>
+#include "ns3/network-module.h"
+#include "ns3/application-module.h"
+#include "ns3/internet-module.h"
+#include "ns3/core-module.h"
+#include "ns3/point-to-point-module.h"
+#include "ns3/packet.h"
+
+using namespace ns3;
+
+NS_LOG_COMPONENT_DEFINE("TcpBluckSendExample);
+
+int main(int argc, char* argv[]){
+    Commmand cmd;
+    cmd.AddValue("tracing', "Flag to enable/diable tracing", tracing);
+    cmd.AddValue("maxByets", "Total number of butes for application to send:, maxBytes);
+    cmd.Parse(argc, argv);
+    NS_LOG_INFO("Create nodes");
+    NodeContainer nodes;
+    NS_LOG_INFO("Create channel");
+    PointToPointHelper pointToPoint;
+    pointToPoint.setDeviceAttribute("DataRate", STringValue("500kbps"));
+    pointToPoint.setChannelAttribute("Delay", StringValue("5ms"));
+
+    NetDeviceContaier device;
+    devices = pointToPoint(nodes);
+
+    InternetStackHelper internet;
+    internet,Install(nodes);
+    
+    Ipv4AddressHelper ipv4;
+    ipv4.SetBase("10.1.1.0", "255.255.255.0");
+
+    Ipv4InterfaceContainer i = ipv4.Assign(devices);
+
+    uint16_tport=9;
+    BulkSendHelper source("ns3::TcpSocketFactory",InetSockSetADdress(i.GetAddress(1), port));
+
+    source.SetAttribute("MaxBytes", UintegerValue(maxBytes));
+
+
+    ApplicationContainer sourceApps = source.Install(nodes.Get(0));
+    sourceApps.STart(
+        seconds(0.0)
+    )
+
+    
+}

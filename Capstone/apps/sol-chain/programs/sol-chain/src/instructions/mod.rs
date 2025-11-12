@@ -1,0 +1,19 @@
+pub mod community;
+pub mod member;
+pub mod token;
+pub mod nfc;
+pub mod governance;
+pub mod events;
+pub mod social;
+pub mod payment;
+pub mod treasury;
+
+pub use community::*;
+pub use member::*;
+pub use token::*;
+pub use nfc::*;
+pub use governance::*;
+pub use events::*;
+pub use social::*;
+pub use payment::*;
+pub use treasury::*;

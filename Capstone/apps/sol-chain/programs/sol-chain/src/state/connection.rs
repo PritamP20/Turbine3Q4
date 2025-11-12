@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq, Debug)]
 pub enum ConnectionType {
     Friend,
     Colleague,
@@ -8,7 +8,7 @@ pub enum ConnectionType {
     Custom,
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq, Debug)]
 pub enum InteractionType {
     Payment,
     EventMeetup,

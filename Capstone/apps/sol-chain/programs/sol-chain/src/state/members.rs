@@ -6,8 +6,8 @@ pub struct Member{
     pub wallet: Pubkey,
     pub name: String,
     pub metadata_uri: String,
-    pub reputation_score: u64,
-    pub total_event_attended: u32,
+    pub reputation_score: i64,
+    pub total_events_attended: u32,
     pub total_connections: u32,
     pub total_transactions: u32,
     pub nfc_card: Option<Pubkey>,
@@ -22,7 +22,7 @@ impl Member {
         (4 + 32) + // name
         (4 + 200) + // metadata_uri
         8 + // reputation_score
-        4 + // total_event_attended
+        4 + // total_events_attended
         4 + // total_connections
         4 + // total_transactions
         1 + 32 + // nfc_card (Option<Pubkey>)

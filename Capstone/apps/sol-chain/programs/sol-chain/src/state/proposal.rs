@@ -18,13 +18,14 @@ pub enum ProposalStatus {
     Cancelled,
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq, Debug)]
 pub enum VoteType {
     Yes,
     No,
     Abstain,
 }
 
+#[account]
 pub struct Proposal {
     pub community: Pubkey,
     pub proposer: Pubkey,

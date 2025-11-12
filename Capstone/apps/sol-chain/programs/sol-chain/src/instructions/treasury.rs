@@ -1,9 +1,8 @@
-// instructions/treasury.rs
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 use anchor_spl::associated_token::AssociatedToken;
 use crate::state::*;
-use crate::errors::*;
+use crate::error::*;
 
 pub fn withdraw_from_treasury(
     ctx: Context<WithdrawFromTreasury>,
@@ -17,29 +16,25 @@ pub fn withdraw_from_treasury(
     let community = &ctx.accounts.community;
     let proposal = &ctx.accounts.proposal;
 
-    // Verify withdrawal is approved by governance
     require!(
         proposal.status == ProposalStatus::Executed,
         SocialChainError::WithdrawalRequiresProposal
     );
 
-    // Verify proposal is a transfer proposal
     require!(
         proposal.proposal_type == ProposalType::Transfer,
         SocialChainError::InvalidInput
     );
 
-    // Check treasury balance
     require!(
         ctx.accounts.treasury_token_account.amount >= amount,
         SocialChainError::InsufficientTreasuryBalance
     );
 
-    // Transfer from treasury
-    let community_name = community.name.as_bytes();
+    let community_key = community.key();
     let treasury_seeds = &[
         b"treasury",
-        community.key().as_ref(),
+        community_key.as_ref(),
         &[ctx.bumps.treasury],
     ];
     let signer = &[&treasury_seeds[..]];
@@ -83,43 +78,6 @@ pub fn deposit_to_treasury(
 
     msg!("Deposited {} tokens to treasury", amount);
     msg!("Depositor: {}", ctx.accounts.depositor.key());
-
-    Ok(())
-}
-
-pub fn update_reputation(
-    ctx: Context<UpdateReputation>,
-    reputation_delta: i32,
-    reason: String,
-) -> Result<()> {
-    require!(
-        reason.len() >= 5 && reason.len() <= 200,
-        SocialChainError::ReputationReasonRequired
-    );
-
-    let member = &mut ctx.accounts.member;
-    let community = &ctx.accounts.community;
-
-    // Verify admin
-    require!(
-        community.admin == ctx.accounts.admin.key(),
-        SocialChainError::Unauthorized
-    );
-
-    // Update reputation
-    if reputation_delta >= 0 {
-        member.reputation_score = member.reputation_score
-            .checked_add(reputation_delta as i64)
-            .ok_or(SocialChainError::ArithmeticOverflow)?;
-    } else {
-        member.reputation_score = member.reputation_score
-            .checked_sub(reputation_delta.abs() as i64)
-            .ok_or(SocialChainError::ArithmeticUnderflow)?;
-    }
-
-    msg!("Reputation updated for member: {}", member.wallet);
-    msg!("Delta: {}, New score: {}", reputation_delta, member.reputation_score);
-    msg!("Reason: {}", reason);
 
     Ok(())
 }
@@ -219,26 +177,5 @@ pub struct DepositToTreasury<'info> {
 
     pub token_program: Program<'info, Token>,
     pub associated_token_program: Program<'info, AssociatedToken>,
-    pub system_program: Program<'info, System>,
-}
-
-#[derive(Accounts)]
-pub struct UpdateReputation<'info> {
-    #[account(
-        seeds = [b"community", community.name.as_bytes()],
-        bump = community.bump
-    )]
-    pub community: Account<'info, Community>,
-
-    #[account(
-        mut,
-        seeds = [b"member", community.key().as_ref(), member.wallet.as_ref()],
-        bump = member.bump
-    )]
-    pub member: Account<'info, Member>,
-
-    #[account(mut)]
-    pub admin: Signer<'info>,
-
     pub system_program: Program<'info, System>,
 }

@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Mint, MintTo};
 use anchor_spl::associated_token::AssociatedToken;
 use crate::state::*;
-use crate::errors::*;
+use crate::error::*;
 
 pub fn create_event(
     ctx: Context<CreateEvent>,
@@ -270,9 +270,12 @@ pub struct RecordAttendance<'info> {
         init_if_needed,
         payer = payer,
         associated_token::mint = token_mint,
-        associated_token::authority = member.wallet
+        associated_token::authority = member_wallet
     )]
     pub member_token_account: Account<'info, TokenAccount>,
+
+    /// CHECK: Member wallet address
+    pub member_wallet: UncheckedAccount<'info>,
 
     #[account(mut)]
     pub payer: Signer<'info>,

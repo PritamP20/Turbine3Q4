@@ -9,6 +9,7 @@ pub fn create_payment_request(
     amount: u64,
     description: String,
     expires_in: i64,
+    timestamp: i64,
 ) -> Result<()> {
     require!(
         amount > 0,
@@ -111,6 +112,7 @@ pub fn cancel_payment_request(
 }
 
 #[derive(Accounts)]
+#[instruction(amount: u64, description: String, expires_in: i64, timestamp: i64)]
 pub struct CreatePaymentRequest<'info> {
     #[account(
         init,
@@ -121,7 +123,7 @@ pub struct CreatePaymentRequest<'info> {
             community.key().as_ref(),
             from_member.key().as_ref(),
             to_member.key().as_ref(),
-            &Clock::get()?.unix_timestamp.to_le_bytes()
+            &timestamp.to_le_bytes()
         ],
         bump
     )]

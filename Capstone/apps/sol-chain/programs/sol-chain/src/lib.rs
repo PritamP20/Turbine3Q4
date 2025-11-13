@@ -212,8 +212,9 @@ pub mod sol_chain {
         amount: u64,
         description: String,
         expires_in: i64,
+        timestamp: i64,
     ) -> Result<()> {
-        instructions::payment::create_payment_request(ctx, amount, description, expires_in)
+        instructions::payment::create_payment_request(ctx, amount, description, expires_in, timestamp)
     }
 
     pub fn settle_payment_request(ctx: Context<SettlePaymentRequest>) -> Result<()> {

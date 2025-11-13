@@ -1,0 +1,17 @@
+[2025-11-13--10-07-43 INFO actix_server::builder] starting 5 workers
+[2025-11-13--10-07-43 INFO actix_server::server] Tokio runtime found; starting in existing Tokio runtime
+[2025-11-13--10-07-43 INFO actix_server::server] starting service: "actix-web-service-127.0.0.1:18488", workers: 5, listening on: 127.0.0.1:18488
+[2025-11-13--10-07-43 INFO parity_ws] Listening for new connections on 127.0.0.1:8900.
+[2025-11-13--10-07-43 INFO txtx::svm::deploy_program] [Recovery Instructions] - An ephemeral authority account will be created and funded to write to the buffer account.
+[2025-11-13--10-07-43 INFO txtx::svm::deploy_program] [Recovery Instructions] - Please save the following information in case the deployment fails and the account needs to be recovered:
+[2025-11-13--10-07-43 INFO txtx::svm::deploy_program] [Recovery Instructions] - Ephemeral authority public key: NDJyxgmBVFXvVQCtDE1awkpvUazcGiyw9ybpDs7wSMg
+[2025-11-13--10-07-43 INFO txtx::svm::deploy_program] [Recovery Instructions] - Ephemeral authority secret key: [25, 162, 15, 48, 129, 30, 53, 248, 52, 66, 27, 205, 48, 129, 10, 73, 165, 111, 237, 178, 85, 173, 23, 133, 132, 59, 35, 72, 56, 151, 143, 116, 5, 111, 29, 177, 172, 38, 138, 234, 176, 195, 32, 5, 37, 54, 225, 237, 47, 228, 230, 140, 186, 36, 250, 23, 54, 37, 190, 75, 156, 9, 179, 195]
+[2025-11-13--10-07-44 ERROR litesvm] Payer account bo1tAFapeUVZKJEZSoJZtaRd4AjEUr5YeWc3673mFwQ not found.
+[2025-11-13--10-07-44 ERROR txtx::svm::send_transaction] Failed - Failed to broadcast transaction
+[2025-11-13--10-07-44 ERROR txtx::svm::send_transaction] Failed - error: unable to send and confirm transaction (RPC response error -32002: Transaction simulation failed: Attempt to debit an account but found no record of a prior credit.; )
+[2025-11-13--10-07-50 INFO actix_server::worker] shutting down idle worker
+[2025-11-13--10-07-50 INFO actix_server::worker] shutting down idle worker
+[2025-11-13--10-07-50 INFO actix_server::accept] accept thread stopped
+[2025-11-13--10-07-50 INFO actix_server::worker] shutting down idle worker
+[2025-11-13--10-07-50 INFO actix_server::worker] shutting down idle worker
+[2025-11-13--10-07-50 INFO actix_server::worker] shutting down idle worker

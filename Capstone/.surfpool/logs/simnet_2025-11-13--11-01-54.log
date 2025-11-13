@@ -1,0 +1,85 @@
+[2025-11-13--11-01-55 INFO actix_server::builder] starting 5 workers
+[2025-11-13--11-01-55 INFO actix_server::server] Tokio runtime found; starting in existing Tokio runtime
+[2025-11-13--11-01-55 INFO actix_server::server] starting service: "actix-web-service-127.0.0.1:18488", workers: 5, listening on: 127.0.0.1:18488
+[2025-11-13--11-01-55 INFO parity_ws] Listening for new connections on 127.0.0.1:8900.
+[2025-11-13--11-03-14 INFO parity_ws::io] Accepted a new tcp connection from 127.0.0.1:50119.
+[2025-11-13--11-25-20 INFO parity_ws::io] Accepted a new tcp connection from 127.0.0.1:57347.
+[2025-11-13--11-25-24 INFO parity_ws::io] Accepted a new tcp connection from 127.0.0.1:57351.
+[2025-11-13--11-25-35 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-35 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-36 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-36 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-36 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-36 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-36 ERROR litesvm] Transaction sanitization failed
+[2025-11-13--11-25-36 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-36 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-36 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-36 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-37 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-37 ERROR litesvm] Transaction sanitization failed
+[2025-11-13--11-25-37 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-37 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-37 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-37 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-37 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-37 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-37 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-38 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-38 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-38 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-38 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-39 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-39 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-39 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-39 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-40 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-40 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-40 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-40 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-40 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-40 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-40 ERROR litesvm] Transaction sanitization failed
+[2025-11-13--11-25-40 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-40 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-40 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-41 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-41 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-41 ERROR litesvm] Transaction sanitization failed
+[2025-11-13--11-25-41 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-41 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-41 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-42 ERROR litesvm] Transaction sanitization failed
+[2025-11-13--11-25-42 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-42 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-42 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-42 ERROR litesvm] Transaction sanitization failed
+[2025-11-13--11-25-42 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-43 ERROR litesvm] Transaction sanitization failed
+[2025-11-13--11-25-43 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-44 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-44 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-44 ERROR litesvm] Transaction sanitization failed
+[2025-11-13--11-25-44 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-44 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-44 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-45 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-45 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-45 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-45 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-45 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-45 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-45 ERROR litesvm] Transaction sanitization failed
+[2025-11-13--11-25-45 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-45 ERROR litesvm] Transaction sanitization failed
+[2025-11-13--11-25-45 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-45 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-45 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-46 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-46 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-46 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-46 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-46 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-46 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-46 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--11-25-46 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.

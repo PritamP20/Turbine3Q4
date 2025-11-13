@@ -8,7 +8,7 @@ import { Program } from "@coral-xyz/anchor";
 import { SolChain } from "../target/types/sol_chain";
 import { PublicKey, Keypair, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-
+ 
 describe("Setup", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);

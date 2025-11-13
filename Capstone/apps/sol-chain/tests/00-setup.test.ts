@@ -17,7 +17,7 @@ describe("Setup", () => {
   const admin = provider.wallet as anchor.Wallet;
   const communityName = "TestDAO";
   const tokenSymbol = "TEST";
-  const tokenDecimals = 9;
+  const tokenDecimals = 9; 
   const governanceThreshold = 51;
   
   let communityPda: PublicKey;

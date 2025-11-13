@@ -6,6 +6,7 @@
     "test": "anchor test --skip-build --skip-deploy",
     "test:local": "./test-local.sh",
     "test:devnet": "./test-devnet.sh",
+    "test:devnet:all": "./run-all-tests-devnet.sh",
     "test:full": "anchor test"
   },
   "dependencies": {

@@ -38,8 +38,8 @@ pub fn create_payment_request(
     payment_request.amount = amount;
     payment_request.description = description;
     payment_request.status = PaymentRequestStatus::Pending;
-    payment_request.created_at = clock.unix_timestamp;
-    payment_request.expires_at = clock.unix_timestamp
+    payment_request.created_at = timestamp; // Use the timestamp parameter for PDA consistency
+    payment_request.expires_at = timestamp
         .checked_add(expires_in)
         .ok_or(SocialChainError::ArithmeticOverflow)?;
     payment_request.settled_at = None;
@@ -121,8 +121,8 @@ pub struct CreatePaymentRequest<'info> {
         seeds = [
             b"payment_request",
             community.key().as_ref(),
-            from_member.key().as_ref(),
-            to_member.key().as_ref(),
+            from_member.wallet.as_ref(),
+            to_member.wallet.as_ref(),
             &timestamp.to_le_bytes()
         ],
         bump

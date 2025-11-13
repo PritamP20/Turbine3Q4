@@ -83,3 +83,9 @@
 [2025-11-13--11-25-46 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
 [2025-11-13--11-25-46 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
 [2025-11-13--11-25-46 ERROR litesvm] Program account dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo is not executable.
+[2025-11-13--14-20-19 INFO actix_server::worker] shutting down idle worker
+[2025-11-13--14-20-19 INFO actix_server::worker] shutting down idle worker
+[2025-11-13--14-20-19 INFO actix_server::worker] shutting down idle worker
+[2025-11-13--14-20-19 INFO actix_server::worker] shutting down idle worker
+[2025-11-13--14-20-19 INFO actix_server::accept] accept thread stopped
+[2025-11-13--14-20-19 INFO actix_server::worker] shutting down idle worker

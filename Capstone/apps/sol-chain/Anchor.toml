@@ -6,7 +6,10 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-sol_chain = "dCVdEWu3XaGhDy7wXBzgcUYk1nk43Xe1NK2PfAKATqo"
+sol_chain = "FqNejJjmQcntD1SQB9zAEUD8k6HymXwUBoXuBgWsW3eg"
+
+[programs.devnet]
+sol_chain = "FqNejJjmQcntD1SQB9zAEUD8k6HymXwUBoXuBgWsW3eg"
 
 [registry]
 url = "https://api.apr.dev"
@@ -14,9 +17,11 @@ url = "https://api.apr.dev"
 # [provider]
 # cluster = "devnet"
 # wallet = "~/.config/solana/bolt.json"
+# anchor test --skip-local-validator
+
 
 [provider]
-cluster = "devnet"
+cluster = "Localnet"
 wallet = "/Users/pritam/.config/solana/bolt.json"
 
 [scripts]

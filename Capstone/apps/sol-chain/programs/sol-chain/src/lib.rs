@@ -41,7 +41,7 @@ pub mod sol_chain {
             governance_threshold,
             transfer_fee_bps,
         )
-    }
+    } 
 
     // Member instructions
     pub fn register_member(

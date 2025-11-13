@@ -5,3 +5,4 @@ target
 node_modules
 test-ledger
 .yarn
+Capstone/apps/sol-chain/test-ledger/

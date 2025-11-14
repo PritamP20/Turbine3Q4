@@ -1,0 +1,5821 @@
+{
+  "address": "FqNejJjmQcntD1SQB9zAEUD8k6HymXwUBoXuBgWsW3eg",
+  "metadata": {
+    "name": "sol_chain",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "authenticate_nfc",
+      "discriminator": [
+        44,
+        237,
+        109,
+        80,
+        123,
+        58,
+        97,
+        79
+      ],
+      "accounts": [
+        {
+          "name": "nfc_card",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  110,
+                  102,
+                  99,
+                  95,
+                  99,
+                  97,
+                  114,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "arg",
+                "path": "card_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "card_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "batch_transfer",
+      "discriminator": [
+        209,
+        90,
+        4,
+        108,
+        61,
+        185,
+        18,
+        139
+      ],
+      "accounts": [
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "sender",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amounts",
+          "type": {
+            "vec": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "burn_tokens",
+      "discriminator": [
+        76,
+        15,
+        51,
+        254,
+        229,
+        215,
+        121,
+        66
+      ],
+      "accounts": [
+        {
+          "name": "token_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "cancel_payment_request",
+      "discriminator": [
+        246,
+        129,
+        93,
+        79,
+        189,
+        140,
+        84,
+        7
+      ],
+      "accounts": [
+        {
+          "name": "payment_request",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  109,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  113,
+                  117,
+                  101,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "payment_request.community",
+                "account": "PaymentRequest"
+              },
+              {
+                "kind": "account",
+                "path": "payment_request.from",
+                "account": "PaymentRequest"
+              },
+              {
+                "kind": "account",
+                "path": "payment_request.to",
+                "account": "PaymentRequest"
+              },
+              {
+                "kind": "account",
+                "path": "payment_request.created_at",
+                "account": "PaymentRequest"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "cancel_proposal",
+      "discriminator": [
+        106,
+        74,
+        128,
+        146,
+        19,
+        65,
+        39,
+        23
+      ],
+      "accounts": [
+        {
+          "name": "proposal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  112,
+                  111,
+                  115,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "proposal.community",
+                "account": "Proposal"
+              },
+              {
+                "kind": "account",
+                "path": "proposal.title",
+                "account": "Proposal"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "cast_vote",
+      "discriminator": [
+        20,
+        212,
+        15,
+        189,
+        69,
+        180,
+        69,
+        151
+      ],
+      "accounts": [
+        {
+          "name": "proposal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  112,
+                  111,
+                  115,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "proposal.community",
+                "account": "Proposal"
+              },
+              {
+                "kind": "account",
+                "path": "proposal.title",
+                "account": "Proposal"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vote",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  111,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "proposal"
+              },
+              {
+                "kind": "account",
+                "path": "voter"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "voter"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "voter_token_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "voter"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_mint",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "voter",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "vote_type",
+          "type": {
+            "defined": {
+              "name": "VoteType"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "close_event",
+      "discriminator": [
+        117,
+        114,
+        193,
+        54,
+        49,
+        25,
+        75,
+        194
+      ],
+      "accounts": [
+        {
+          "name": "event",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  118,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "event.community",
+                "account": "Event"
+              },
+              {
+                "kind": "account",
+                "path": "event.name",
+                "account": "Event"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_community_token",
+      "discriminator": [
+        158,
+        45,
+        117,
+        193,
+        211,
+        126,
+        186,
+        254
+      ],
+      "accounts": [
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "treasury"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "treasury",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "symbol",
+          "type": "string"
+        },
+        {
+          "name": "decimals",
+          "type": "u8"
+        },
+        {
+          "name": "initial_supply",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "create_connection",
+      "discriminator": [
+        107,
+        30,
+        231,
+        166,
+        113,
+        240,
+        77,
+        88
+      ],
+      "accounts": [
+        {
+          "name": "connection",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  110,
+                  101,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "member_a"
+              },
+              {
+                "kind": "account",
+                "path": "member_b"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member_a",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "member_a.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member_b",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "member_b.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "initiator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "connection_type",
+          "type": {
+            "defined": {
+              "name": "ConnectionType"
+            }
+          }
+        },
+        {
+          "name": "metadata",
+          "type": {
+            "option": "string"
+          }
+        }
+      ]
+    },
+    {
+      "name": "create_event",
+      "discriminator": [
+        49,
+        219,
+        29,
+        203,
+        22,
+        98,
+        100,
+        87
+      ],
+      "accounts": [
+        {
+          "name": "event",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  118,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "arg",
+                "path": "name"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "organizer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "organizer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "start_time",
+          "type": "i64"
+        },
+        {
+          "name": "end_time",
+          "type": "i64"
+        },
+        {
+          "name": "max_attendees",
+          "type": {
+            "option": "u32"
+          }
+        },
+        {
+          "name": "token_reward",
+          "type": {
+            "option": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "create_nfc_card",
+      "discriminator": [
+        35,
+        47,
+        132,
+        218,
+        138,
+        134,
+        211,
+        215
+      ],
+      "accounts": [
+        {
+          "name": "nfc_card",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  110,
+                  102,
+                  99,
+                  95,
+                  99,
+                  97,
+                  114,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "arg",
+                "path": "card_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "member.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "card_id",
+          "type": "string"
+        },
+        {
+          "name": "metadata_uri",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "create_payment_request",
+      "discriminator": [
+        246,
+        150,
+        103,
+        37,
+        15,
+        36,
+        93,
+        100
+      ],
+      "accounts": [
+        {
+          "name": "payment_request",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  109,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  113,
+                  117,
+                  101,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "from_member.wallet",
+                "account": "Member"
+              },
+              {
+                "kind": "account",
+                "path": "to_member.wallet",
+                "account": "Member"
+              },
+              {
+                "kind": "arg",
+                "path": "timestamp"
+              }
+            ]
+          }
+        },
+        {
+          "name": "from_member",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "from_member.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "to_member",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "to_member.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "expires_in",
+          "type": "i64"
+        },
+        {
+          "name": "timestamp",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "create_proposal",
+      "discriminator": [
+        132,
+        116,
+        68,
+        174,
+        216,
+        160,
+        198,
+        22
+      ],
+      "accounts": [
+        {
+          "name": "proposal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  112,
+                  111,
+                  115,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "arg",
+                "path": "title"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "proposer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "proposer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "proposal_type",
+          "type": {
+            "defined": {
+              "name": "ProposalType"
+            }
+          }
+        },
+        {
+          "name": "execution_data",
+          "type": "bytes"
+        },
+        {
+          "name": "voting_duration",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "deposit_to_treasury",
+      "discriminator": [
+        10,
+        195,
+        112,
+        242,
+        107,
+        206,
+        240,
+        198
+      ],
+      "accounts": [
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "depositor_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "depositor"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "treasury_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "treasury"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "treasury",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_mint",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "depositor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "execute_proposal",
+      "discriminator": [
+        186,
+        60,
+        116,
+        133,
+        108,
+        128,
+        111,
+        28
+      ],
+      "accounts": [
+        {
+          "name": "proposal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  112,
+                  111,
+                  115,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "proposal.community",
+                "account": "Proposal"
+              },
+              {
+                "kind": "account",
+                "path": "proposal.title",
+                "account": "Proposal"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "finalize_proposal",
+      "discriminator": [
+        23,
+        68,
+        51,
+        167,
+        109,
+        173,
+        187,
+        164
+      ],
+      "accounts": [
+        {
+          "name": "proposal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  112,
+                  111,
+                  115,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "proposal.community",
+                "account": "Proposal"
+              },
+              {
+                "kind": "account",
+                "path": "proposal.title",
+                "account": "Proposal"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_community",
+      "discriminator": [
+        200,
+        51,
+        132,
+        44,
+        192,
+        86,
+        125,
+        41
+      ],
+      "accounts": [
+        {
+          "name": "community",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "community_name"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "community_name"
+              }
+            ]
+          }
+        },
+        {
+          "name": "collection_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  108,
+                  108,
+                  101,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "community_name"
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "community_name",
+          "type": "string"
+        },
+        {
+          "name": "token_symbol",
+          "type": "string"
+        },
+        {
+          "name": "token_decimals",
+          "type": "u8"
+        },
+        {
+          "name": "governance_threshold",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "record_attendance",
+      "discriminator": [
+        79,
+        87,
+        96,
+        24,
+        25,
+        169,
+        16,
+        201
+      ],
+      "accounts": [
+        {
+          "name": "event",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  118,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "event.community",
+                "account": "Event"
+              },
+              {
+                "kind": "account",
+                "path": "event.name",
+                "account": "Event"
+              }
+            ]
+          }
+        },
+        {
+          "name": "attendance",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  116,
+                  116,
+                  101,
+                  110,
+                  100,
+                  97,
+                  110,
+                  99,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "event"
+              },
+              {
+                "kind": "account",
+                "path": "member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "member.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "nfc_card",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  110,
+                  102,
+                  99,
+                  95,
+                  99,
+                  97,
+                  114,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "arg",
+                "path": "card_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "member_wallet"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "member_wallet"
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "card_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "record_interaction",
+      "discriminator": [
+        65,
+        146,
+        211,
+        187,
+        78,
+        89,
+        206,
+        105
+      ],
+      "accounts": [
+        {
+          "name": "connection",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  110,
+                  101,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "connection.community",
+                "account": "Connection"
+              },
+              {
+                "kind": "account",
+                "path": "connection.member_a",
+                "account": "Connection"
+              },
+              {
+                "kind": "account",
+                "path": "connection.member_b",
+                "account": "Connection"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "member.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "interaction_type",
+          "type": {
+            "defined": {
+              "name": "InteractionType"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "register_member",
+      "discriminator": [
+        44,
+        19,
+        160,
+        59,
+        17,
+        122,
+        38,
+        16
+      ],
+      "accounts": [
+        {
+          "name": "member",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "wallet"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "wallet",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "metadata_uri",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "remove_connection",
+      "discriminator": [
+        200,
+        145,
+        119,
+        103,
+        85,
+        190,
+        120,
+        138
+      ],
+      "accounts": [
+        {
+          "name": "connection",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  110,
+                  101,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "connection.community",
+                "account": "Connection"
+              },
+              {
+                "kind": "account",
+                "path": "connection.member_a",
+                "account": "Connection"
+              },
+              {
+                "kind": "account",
+                "path": "connection.member_b",
+                "account": "Connection"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member_a",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "member_a.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member_b",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "member_b.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "refund_receiver",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "revoke_nfc_card",
+      "discriminator": [
+        66,
+        2,
+        233,
+        119,
+        171,
+        219,
+        189,
+        185
+      ],
+      "accounts": [
+        {
+          "name": "nfc_card",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  110,
+                  102,
+                  99,
+                  95,
+                  99,
+                  97,
+                  114,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "arg",
+                "path": "card_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "member.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "card_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "settle_payment_request",
+      "discriminator": [
+        18,
+        28,
+        170,
+        163,
+        251,
+        251,
+        46,
+        4
+      ],
+      "accounts": [
+        {
+          "name": "payment_request",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  109,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  113,
+                  117,
+                  101,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "payment_request.community",
+                "account": "PaymentRequest"
+              },
+              {
+                "kind": "account",
+                "path": "payment_request.from",
+                "account": "PaymentRequest"
+              },
+              {
+                "kind": "account",
+                "path": "payment_request.to",
+                "account": "PaymentRequest"
+              },
+              {
+                "kind": "account",
+                "path": "payment_request.created_at",
+                "account": "PaymentRequest"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "payer"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "recipient_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "recipient"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "recipient"
+        },
+        {
+          "name": "token_mint",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "transfer_nfc_card",
+      "discriminator": [
+        159,
+        50,
+        80,
+        131,
+        198,
+        121,
+        214,
+        235
+      ],
+      "accounts": [
+        {
+          "name": "nfc_card",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  110,
+                  102,
+                  99,
+                  95,
+                  99,
+                  97,
+                  114,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "arg",
+                "path": "card_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "old_member",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "old_member.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "new_member",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "new_member.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "card_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "transfer_tokens",
+      "discriminator": [
+        54,
+        180,
+        238,
+        175,
+        74,
+        85,
+        126,
+        188
+      ],
+      "accounts": [
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "sender_member",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "sender"
+              }
+            ]
+          }
+        },
+        {
+          "name": "recipient_member",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "recipient_member.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "sender_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "sender"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "recipient_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "recipient"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "recipient"
+        },
+        {
+          "name": "treasury_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "treasury"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_mint",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "sender",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "memo",
+          "type": {
+            "option": "string"
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_community_config",
+      "discriminator": [
+        170,
+        190,
+        170,
+        0,
+        253,
+        126,
+        242,
+        243
+      ],
+      "accounts": [
+        {
+          "name": "community",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "new_admin",
+          "type": {
+            "option": "pubkey"
+          }
+        },
+        {
+          "name": "governance_threshold",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
+          "name": "transfer_fee_bps",
+          "type": {
+            "option": "u16"
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_connection_metadata",
+      "discriminator": [
+        154,
+        247,
+        116,
+        107,
+        53,
+        66,
+        248,
+        28
+      ],
+      "accounts": [
+        {
+          "name": "connection",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  110,
+                  101,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "connection.community",
+                "account": "Connection"
+              },
+              {
+                "kind": "account",
+                "path": "connection.member_a",
+                "account": "Connection"
+              },
+              {
+                "kind": "account",
+                "path": "connection.member_b",
+                "account": "Connection"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "member.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "new_metadata",
+          "type": {
+            "option": "string"
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_member_metadata",
+      "discriminator": [
+        75,
+        139,
+        191,
+        31,
+        162,
+        180,
+        223,
+        69
+      ],
+      "accounts": [
+        {
+          "name": "member",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "wallet"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "wallet",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "new_metadata_uri",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "update_reputation",
+      "discriminator": [
+        194,
+        220,
+        43,
+        201,
+        54,
+        209,
+        49,
+        178
+      ],
+      "accounts": [
+        {
+          "name": "member",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              },
+              {
+                "kind": "account",
+                "path": "member.wallet",
+                "account": "Member"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "delta",
+          "type": "i64"
+        },
+        {
+          "name": "reason",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "withdraw_from_treasury",
+      "discriminator": [
+        0,
+        164,
+        86,
+        76,
+        56,
+        72,
+        12,
+        170
+      ],
+      "accounts": [
+        {
+          "name": "community",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  109,
+                  109,
+                  117,
+                  110,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "proposal",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  112,
+                  111,
+                  115,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "proposal.community",
+                "account": "Proposal"
+              },
+              {
+                "kind": "account",
+                "path": "proposal.title",
+                "account": "Proposal"
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "treasury"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "recipient_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "recipient"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "treasury",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "recipient"
+        },
+        {
+          "name": "token_mint",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community.name",
+                "account": "Community"
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Attendance",
+      "discriminator": [
+        86,
+        179,
+        13,
+        208,
+        153,
+        204,
+        118,
+        63
+      ]
+    },
+    {
+      "name": "Community",
+      "discriminator": [
+        192,
+        73,
+        211,
+        158,
+        178,
+        81,
+        19,
+        112
+      ]
+    },
+    {
+      "name": "Connection",
+      "discriminator": [
+        209,
+        186,
+        115,
+        58,
+        36,
+        236,
+        179,
+        10
+      ]
+    },
+    {
+      "name": "Event",
+      "discriminator": [
+        125,
+        192,
+        125,
+        158,
+        9,
+        115,
+        152,
+        233
+      ]
+    },
+    {
+      "name": "Member",
+      "discriminator": [
+        54,
+        19,
+        162,
+        21,
+        29,
+        166,
+        17,
+        198
+      ]
+    },
+    {
+      "name": "NfcCard",
+      "discriminator": [
+        17,
+        16,
+        68,
+        98,
+        7,
+        46,
+        47,
+        70
+      ]
+    },
+    {
+      "name": "PaymentRequest",
+      "discriminator": [
+        27,
+        20,
+        202,
+        96,
+        101,
+        242,
+        124,
+        69
+      ]
+    },
+    {
+      "name": "Proposal",
+      "discriminator": [
+        26,
+        94,
+        189,
+        187,
+        116,
+        136,
+        53,
+        33
+      ]
+    },
+    {
+      "name": "Vote",
+      "discriminator": [
+        96,
+        91,
+        104,
+        57,
+        145,
+        35,
+        172,
+        155
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized: Only admin can perform this action"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidCommunityName",
+      "msg": "Invalid community name: must be 3-50 characters"
+    },
+    {
+      "code": 6002,
+      "name": "CommunityAlreadyExists",
+      "msg": "Community already exists"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidGovernanceThreshold",
+      "msg": "Invalid governance threshold: must be 1-100"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidTransferFee",
+      "msg": "Invalid transfer fee: must be 0-1000 basis points"
+    },
+    {
+      "code": 6005,
+      "name": "MemberAlreadyRegistered",
+      "msg": "Member already registered"
+    },
+    {
+      "code": 6006,
+      "name": "MemberNotFound",
+      "msg": "Member not found"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidMemberName",
+      "msg": "Invalid member name: must be 1-50 characters"
+    },
+    {
+      "code": 6008,
+      "name": "InvalidMetadataUri",
+      "msg": "Invalid metadata URI"
+    },
+    {
+      "code": 6009,
+      "name": "InsufficientTokens",
+      "msg": "Insufficient tokens"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidTokenAmount",
+      "msg": "Invalid token amount"
+    },
+    {
+      "code": 6011,
+      "name": "TokenTransferFailed",
+      "msg": "Token transfer failed"
+    },
+    {
+      "code": 6012,
+      "name": "TokenMintFailed",
+      "msg": "Token mint failed"
+    },
+    {
+      "code": 6013,
+      "name": "TokenBurnFailed",
+      "msg": "Token burn failed"
+    },
+    {
+      "code": 6014,
+      "name": "InvalidDecimals",
+      "msg": "Invalid decimals: must be 0-9"
+    },
+    {
+      "code": 6015,
+      "name": "BatchTransferMismatch",
+      "msg": "Batch transfer array mismatch"
+    },
+    {
+      "code": 6016,
+      "name": "InvalidNfcCard",
+      "msg": "Invalid NFC card"
+    },
+    {
+      "code": 6017,
+      "name": "NfcCardAlreadyExists",
+      "msg": "NFC card already exists"
+    },
+    {
+      "code": 6018,
+      "name": "NfcCardNotActive",
+      "msg": "NFC card not active"
+    },
+    {
+      "code": 6019,
+      "name": "NfcCardNotFound",
+      "msg": "NFC card not found"
+    },
+    {
+      "code": 6020,
+      "name": "InvalidCardId",
+      "msg": "Invalid card ID"
+    },
+    {
+      "code": 6021,
+      "name": "NfcAuthenticationFailed",
+      "msg": "NFC authentication failed"
+    },
+    {
+      "code": 6022,
+      "name": "CannotTransferToSameOwner",
+      "msg": "Cannot transfer card to same owner"
+    },
+    {
+      "code": 6023,
+      "name": "VotingPeriodEnded",
+      "msg": "Proposal voting period has ended"
+    },
+    {
+      "code": 6024,
+      "name": "ProposalNotApproved",
+      "msg": "Proposal not approved"
+    },
+    {
+      "code": 6025,
+      "name": "ProposalAlreadyExecuted",
+      "msg": "Proposal already executed"
+    },
+    {
+      "code": 6026,
+      "name": "ProposalNotActive",
+      "msg": "Proposal not active"
+    },
+    {
+      "code": 6027,
+      "name": "AlreadyVoted",
+      "msg": "Already voted on this proposal"
+    },
+    {
+      "code": 6028,
+      "name": "InvalidVotingPeriod",
+      "msg": "Invalid voting period"
+    },
+    {
+      "code": 6029,
+      "name": "InvalidProposalTitle",
+      "msg": "Invalid proposal title"
+    },
+    {
+      "code": 6030,
+      "name": "InvalidProposalDescription",
+      "msg": "Invalid proposal description"
+    },
+    {
+      "code": 6031,
+      "name": "CannotCancelExecutedProposal",
+      "msg": "Cannot cancel executed proposal"
+    },
+    {
+      "code": 6032,
+      "name": "VotingPeriodNotEnded",
+      "msg": "Voting period not ended"
+    },
+    {
+      "code": 6033,
+      "name": "EventClosed",
+      "msg": "Event already closed"
+    },
+    {
+      "code": 6034,
+      "name": "EventNotStarted",
+      "msg": "Event not started yet"
+    },
+    {
+      "code": 6035,
+      "name": "EventEnded",
+      "msg": "Event already ended"
+    },
+    {
+      "code": 6036,
+      "name": "MaxAttendeesReached",
+      "msg": "Maximum attendees reached"
+    },
+    {
+      "code": 6037,
+      "name": "AlreadyRegistered",
+      "msg": "Already registered for event"
+    },
+    {
+      "code": 6038,
+      "name": "InvalidEventTime",
+      "msg": "Invalid event time"
+    },
+    {
+      "code": 6039,
+      "name": "EventNotFound",
+      "msg": "Event not found"
+    },
+    {
+      "code": 6040,
+      "name": "InvalidEventName",
+      "msg": "Invalid event name"
+    },
+    {
+      "code": 6041,
+      "name": "EventCancelled",
+      "msg": "Event cancelled"
+    },
+    {
+      "code": 6042,
+      "name": "InvalidConnection",
+      "msg": "Invalid connection"
+    },
+    {
+      "code": 6043,
+      "name": "ConnectionAlreadyExists",
+      "msg": "Connection already exists"
+    },
+    {
+      "code": 6044,
+      "name": "CannotConnectToSelf",
+      "msg": "Cannot connect to self"
+    },
+    {
+      "code": 6045,
+      "name": "ConnectionNotFound",
+      "msg": "Connection not found"
+    },
+    {
+      "code": 6046,
+      "name": "InvalidConnectionMetadata",
+      "msg": "Invalid connection metadata"
+    },
+    {
+      "code": 6047,
+      "name": "PaymentFailed",
+      "msg": "Payment failed"
+    },
+    {
+      "code": 6048,
+      "name": "InvalidPaymentAmount",
+      "msg": "Invalid payment amount"
+    },
+    {
+      "code": 6049,
+      "name": "PaymentRequestExpired",
+      "msg": "Payment request expired"
+    },
+    {
+      "code": 6050,
+      "name": "PaymentRequestNotFound",
+      "msg": "Payment request not found"
+    },
+    {
+      "code": 6051,
+      "name": "PaymentRequestAlreadySettled",
+      "msg": "Payment request already settled"
+    },
+    {
+      "code": 6052,
+      "name": "InvalidPaymentMemo",
+      "msg": "Invalid payment memo"
+    },
+    {
+      "code": 6053,
+      "name": "CannotPaySelf",
+      "msg": "Cannot pay self"
+    },
+    {
+      "code": 6054,
+      "name": "InsufficientTreasuryBalance",
+      "msg": "Insufficient treasury balance"
+    },
+    {
+      "code": 6055,
+      "name": "InvalidWithdrawalAmount",
+      "msg": "Invalid withdrawal amount"
+    },
+    {
+      "code": 6056,
+      "name": "WithdrawalRequiresProposal",
+      "msg": "Withdrawal requires approved proposal"
+    },
+    {
+      "code": 6057,
+      "name": "InvalidDepositAmount",
+      "msg": "Invalid deposit amount"
+    },
+    {
+      "code": 6058,
+      "name": "InvalidReputationDelta",
+      "msg": "Invalid reputation delta"
+    },
+    {
+      "code": 6059,
+      "name": "ReputationReasonRequired",
+      "msg": "Reputation reason required"
+    },
+    {
+      "code": 6060,
+      "name": "ArithmeticOverflow",
+      "msg": "Arithmetic overflow"
+    },
+    {
+      "code": 6061,
+      "name": "ArithmeticUnderflow",
+      "msg": "Arithmetic underflow"
+    },
+    {
+      "code": 6062,
+      "name": "InvalidTimestamp",
+      "msg": "Invalid timestamp"
+    },
+    {
+      "code": 6063,
+      "name": "StringTooLong",
+      "msg": "String too long"
+    },
+    {
+      "code": 6064,
+      "name": "InvalidInput",
+      "msg": "Invalid input"
+    },
+    {
+      "code": 6065,
+      "name": "OperationNotAllowed",
+      "msg": "Operation not allowed"
+    },
+    {
+      "code": 6066,
+      "name": "AccountMismatch",
+      "msg": "Account mismatch"
+    },
+    {
+      "code": 6067,
+      "name": "InvalidSigner",
+      "msg": "Invalid signer"
+    }
+  ],
+  "types": [
+    {
+      "name": "Attendance",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "event",
+            "type": "pubkey"
+          },
+          {
+            "name": "member",
+            "type": "pubkey"
+          },
+          {
+            "name": "nfc_card",
+            "type": "pubkey"
+          },
+          {
+            "name": "checked_in_at",
+            "type": "i64"
+          },
+          {
+            "name": "reward_claimed",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Community",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "token_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "token_symbol",
+            "type": "string"
+          },
+          {
+            "name": "token_decimals",
+            "type": "u8"
+          },
+          {
+            "name": "governance_threshold",
+            "type": "u8"
+          },
+          {
+            "name": "member_count",
+            "type": "u32"
+          },
+          {
+            "name": "transfer_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "treasury",
+            "type": "pubkey"
+          },
+          {
+            "name": "collection_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Connection",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "community",
+            "type": "pubkey"
+          },
+          {
+            "name": "member_a",
+            "type": "pubkey"
+          },
+          {
+            "name": "member_b",
+            "type": "pubkey"
+          },
+          {
+            "name": "connection_type",
+            "type": {
+              "defined": {
+                "name": "ConnectionType"
+              }
+            }
+          },
+          {
+            "name": "metadata",
+            "type": {
+              "option": "string"
+            }
+          },
+          {
+            "name": "interaction_count",
+            "type": "u32"
+          },
+          {
+            "name": "last_interaction",
+            "type": "i64"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ConnectionType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Friend"
+          },
+          {
+            "name": "Colleague"
+          },
+          {
+            "name": "Vendor"
+          },
+          {
+            "name": "Custom"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Event",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "community",
+            "type": "pubkey"
+          },
+          {
+            "name": "organizer",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "start_time",
+            "type": "i64"
+          },
+          {
+            "name": "end_time",
+            "type": "i64"
+          },
+          {
+            "name": "max_attendees",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "current_attendees",
+            "type": "u32"
+          },
+          {
+            "name": "token_reward",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "EventStatus"
+              }
+            }
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EventStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Upcoming"
+          },
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Closed"
+          },
+          {
+            "name": "Cancelled"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InteractionType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Payment"
+          },
+          {
+            "name": "EventMeetup"
+          },
+          {
+            "name": "Message"
+          },
+          {
+            "name": "Collaboration"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Member",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "community",
+            "type": "pubkey"
+          },
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "metadata_uri",
+            "type": "string"
+          },
+          {
+            "name": "reputation_score",
+            "type": "i64"
+          },
+          {
+            "name": "total_events_attended",
+            "type": "u32"
+          },
+          {
+            "name": "total_connections",
+            "type": "u32"
+          },
+          {
+            "name": "total_transactions",
+            "type": "u32"
+          },
+          {
+            "name": "nfc_card",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "joined_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "NfcCard",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "community",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "card_id",
+            "type": "string"
+          },
+          {
+            "name": "asset_id",
+            "type": "string"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "last_used",
+            "type": "i64"
+          },
+          {
+            "name": "total_uses",
+            "type": "i64"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PaymentRequest",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "community",
+            "type": "pubkey"
+          },
+          {
+            "name": "from",
+            "type": "pubkey"
+          },
+          {
+            "name": "to",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "PaymentRequestStatus"
+              }
+            }
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "expires_at",
+            "type": "i64"
+          },
+          {
+            "name": "settled_at",
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PaymentRequestStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Pending"
+          },
+          {
+            "name": "Completed"
+          },
+          {
+            "name": "Expired"
+          },
+          {
+            "name": "Cancelled"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Proposal",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "community",
+            "type": "pubkey"
+          },
+          {
+            "name": "proposer",
+            "type": "pubkey"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "proposal_type",
+            "type": {
+              "defined": {
+                "name": "ProposalType"
+              }
+            }
+          },
+          {
+            "name": "execution_data",
+            "type": "bytes"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "ProposalStatus"
+              }
+            }
+          },
+          {
+            "name": "yes_votes",
+            "type": "u64"
+          },
+          {
+            "name": "no_votes",
+            "type": "u64"
+          },
+          {
+            "name": "abstain_votes",
+            "type": "u64"
+          },
+          {
+            "name": "total_voters",
+            "type": "u32"
+          },
+          {
+            "name": "voting_ends_at",
+            "type": "i64"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "executed_at",
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProposalStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Approved"
+          },
+          {
+            "name": "Rejected"
+          },
+          {
+            "name": "Executed"
+          },
+          {
+            "name": "Cancelled"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProposalType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Transfer"
+          },
+          {
+            "name": "ConfigChange"
+          },
+          {
+            "name": "MemberAction"
+          },
+          {
+            "name": "Custom"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Vote",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "proposal",
+            "type": "pubkey"
+          },
+          {
+            "name": "voter",
+            "type": "pubkey"
+          },
+          {
+            "name": "vote_type",
+            "type": {
+              "defined": {
+                "name": "VoteType"
+              }
+            }
+          },
+          {
+            "name": "voting_power",
+            "type": "u64"
+          },
+          {
+            "name": "voted_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VoteType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Yes"
+          },
+          {
+            "name": "No"
+          },
+          {
+            "name": "Abstain"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { WalletContextProvider } from "@/components/WalletProvider";
+import { QueryProvider } from "@/lib/query-client";
+import { ToastProvider } from "@/components/ToastContainer";
 import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
@@ -17,10 +19,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-zinc-50 dark:bg-zinc-950 antialiased">
-        <WalletContextProvider>
-          <Navbar />
-          {children}
-        </WalletContextProvider>
+        <QueryProvider>
+          <WalletContextProvider>
+            <ToastProvider>
+              <Navbar />
+              {children}
+            </ToastProvider>
+          </WalletContextProvider>
+        </QueryProvider>
       </body>
     </html>
   );

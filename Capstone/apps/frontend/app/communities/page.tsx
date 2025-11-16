@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useWallet, useAnchorWallet } from "@solana/wallet-adapter-react";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { getProgram, getConnection } from "@/lib/anchor-setup";
+import { JoinCommunityModal } from "@/components/JoinCommunityModal";
 
 interface Community {
   publicKey: string;
@@ -44,7 +46,7 @@ export default function CommunitiesPage() {
       const program = getProgram(provider);
 
       // Fetch all community accounts
-      const communityAccounts = await program.account.community.all();
+      const communityAccounts = await (program.account as any).community.all();
       
       const communitiesData: Community[] = communityAccounts.map((account: any) => ({
         publicKey: account.publicKey.toString(),
@@ -251,9 +253,148 @@ export default function CommunitiesPage() {
 function CommunityCard({ community }: { community: Community }) {
   const wallet = useAnchorWallet();
   const isAdmin = wallet && community.admin === wallet.publicKey.toString();
+  const [joining, setJoining] = useState(false);
+  const [isMember, setIsMember] = useState(false);
+  const [message, setMessage] = useState("");
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    checkMembership();
+  }, [wallet, community]);
+
+  const checkMembership = async () => {
+    if (!wallet) return;
+    
+    try {
+      const connection = getConnection();
+      const provider = new AnchorProvider(connection, wallet, {});
+      const program = getProgram(provider);
+
+      const communityPda = new PublicKey(community.publicKey);
+      const [memberPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("member"), communityPda.toBuffer(), wallet.publicKey.toBuffer()],
+        program.programId
+      );
+
+      const memberAccount = await (program.account as any).member.fetch(memberPda);
+      if (memberAccount) {
+        setIsMember(true);
+      }
+    } catch (error) {
+      // Not a member
+      setIsMember(false);
+    }
+  };
+
+  const joinCommunity = async (memberName: string, imageFile: File | null) => {
+    if (!wallet) return;
+
+    setJoining(true);
+    setMessage("");
+
+    try {
+      const connection = getConnection();
+      const provider = new AnchorProvider(connection, wallet, {});
+      const program = getProgram(provider);
+
+      const communityPda = new PublicKey(community.publicKey);
+      
+      // Fetch community to get member count for NFT name
+      const communityAccount = await (program.account as any).community.fetch(communityPda);
+      
+      const [memberPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("member"), communityPda.toBuffer(), wallet.publicKey.toBuffer()],
+        program.programId
+      );
+
+      // Derive membership NFT mint PDA
+      const [membershipNftMint] = PublicKey.findProgramAddressSync(
+        [Buffer.from("membership_nft"), communityPda.toBuffer(), wallet.publicKey.toBuffer()],
+        program.programId
+      );
+
+      // Derive associated token account for the NFT
+      const [memberNftTokenAccount] = PublicKey.findProgramAddressSync(
+        [
+          wallet.publicKey.toBuffer(),
+          TOKEN_PROGRAM_ID.toBuffer(),
+          membershipNftMint.toBuffer(),
+        ],
+        new PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL") // Associated Token Program
+      );
+
+      // Derive metadata account
+      const METADATA_PROGRAM_ID = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
+      const [nftMetadata] = PublicKey.findProgramAddressSync(
+        [
+          Buffer.from("metadata"),
+          METADATA_PROGRAM_ID.toBuffer(),
+          membershipNftMint.toBuffer(),
+        ],
+        METADATA_PROGRAM_ID
+      );
+
+      // For now, use a simple metadata URI
+      // TODO: Upload image to IPFS/Arweave and use that URL
+      // Base64 images are too large for on-chain storage
+      const metadataUri = imageFile 
+        ? `https://nft.storage/${communityPda.toString()}/${wallet.publicKey.toString()}`
+        : `https://nft.storage/${communityPda.toString()}/${wallet.publicKey.toString()}/default`;
+      
+      // Store image in browser storage for display (temporary solution)
+      if (imageFile) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          localStorage.setItem(
+            `nft-image-${communityPda.toString()}-${wallet.publicKey.toString()}`,
+            reader.result as string
+          );
+        };
+        reader.readAsDataURL(imageFile);
+      }
+      
+      const tx = await program.methods
+        .registerMember(memberName, metadataUri)
+        .accountsStrict({
+          member: memberPda,
+          community: communityPda,
+          membershipNftMint: membershipNftMint,
+          memberNftTokenAccount: memberNftTokenAccount,
+          nftMetadata: nftMetadata,
+          wallet: wallet.publicKey,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: new PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"),
+          metadataProgram: METADATA_PROGRAM_ID,
+          systemProgram: SystemProgram.programId,
+          rent: SYSVAR_RENT_PUBKEY,
+        })
+        .rpc();
+
+      setMessage("Successfully joined! Membership NFT minted! 🎉");
+      setIsMember(true);
+      setShowJoinModal(false);
+      setTimeout(() => setMessage(""), 5000);
+    } catch (error: any) {
+      console.error("Join error:", error);
+      setMessage(`Error: ${error.message}`);
+      setTimeout(() => setMessage(""), 5000);
+    } finally {
+      setJoining(false);
+    }
+  };
+
+  const handleCardClick = () => {
+    if (isMember) {
+      router.push(`/communities/${community.publicKey}`);
+    }
+  };
 
   return (
-    <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 dark:hover:border-blue-500 transition-all hover:shadow-lg">
+    <div 
+      onClick={handleCardClick}
+      className={`bg-white dark:bg-zinc-900 rounded-lg p-6 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 dark:hover:border-blue-500 transition-all hover:shadow-lg ${isMember ? 'cursor-pointer' : ''}`}
+    >
       <div className="flex items-start justify-between mb-4">
         <div>
           <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 mb-1">
@@ -263,11 +404,18 @@ function CommunityCard({ community }: { community: Community }) {
             ${community.tokenSymbol}
           </p>
         </div>
-        {isAdmin && (
-          <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium rounded">
-            Admin
-          </span>
-        )}
+        <div className="flex gap-2">
+          {isMember && (
+            <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-medium rounded">
+              Member
+            </span>
+          )}
+          {isAdmin && (
+            <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium rounded">
+              Admin
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="space-y-2 mb-4">
@@ -285,11 +433,49 @@ function CommunityCard({ community }: { community: Community }) {
         </div>
       </div>
 
-      <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
+      <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 mb-4">
         <p className="text-xs text-zinc-500 dark:text-zinc-500 truncate">
           {community.publicKey}
         </p>
       </div>
+
+      {message && (
+        <div className={`mb-3 p-2 rounded text-sm ${message.includes("Error") ? "bg-red-50 dark:bg-red-950 text-red-900 dark:text-red-100" : "bg-green-50 dark:bg-green-950 text-green-900 dark:text-green-100"}`}>
+          {message}
+        </div>
+      )}
+
+      {isMember ? (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(`/communities/${community.publicKey}`);
+          }}
+          className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+        >
+          View Dashboard
+        </button>
+      ) : (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowJoinModal(true);
+          }}
+          disabled={joining}
+          className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {joining ? "Joining..." : "Join Community"}
+        </button>
+      )}
+      
+      {/* Join Community Modal */}
+      <JoinCommunityModal
+        isOpen={showJoinModal}
+        onClose={() => setShowJoinModal(false)}
+        onJoin={joinCommunity}
+        communityName={community.name}
+        loading={joining}
+      />
     </div>
   );
 }

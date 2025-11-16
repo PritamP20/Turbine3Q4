@@ -5,6 +5,7 @@ pub mod proposal;
 pub mod event;
 pub mod connection;
 pub mod payment_request;
+pub mod reward_claim;
 
 pub use community::*;
 pub use members::*;
@@ -13,3 +14,4 @@ pub use proposal::*;
 pub use event::*;
 pub use connection::*;
 pub use payment_request::*;
+pub use reward_claim::*;

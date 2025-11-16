@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("FqNejJjmQcntD1SQB9zAEUD8k6HymXwUBoXuBgWsW3eg");
+declare_id!("69MnDd6Pk6LKMLvTXozWVbEN1SurUgg8ZixuY9bYDC1y");
 
 pub mod error;
 pub mod instructions;
@@ -235,5 +235,15 @@ pub mod sol_chain {
 
     pub fn deposit_to_treasury(ctx: Context<DepositToTreasury>, amount: u64) -> Result<()> {
         instructions::treasury::deposit_to_treasury(ctx, amount)
+    }
+
+    // Reward instructions
+    pub fn claim_reward(
+        ctx: Context<ClaimReward>,
+        period: i64,
+        rank: u8,
+        amount: u64,
+    ) -> Result<()> {
+        instructions::reward::claim_reward(ctx, period, rank, amount)
     }
 }

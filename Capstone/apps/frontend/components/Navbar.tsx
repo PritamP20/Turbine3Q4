@@ -17,6 +17,7 @@ export default function Navbar() {
               <NavLink href="/members">Members</NavLink>
               <NavLink href="/governance">Governance</NavLink>
               <NavLink href="/events">Events</NavLink>
+              <NavLink href="/admin">Admin</NavLink>
             </div>
           </div>
           <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700 !transition-colors" />

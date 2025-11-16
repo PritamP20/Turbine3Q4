@@ -192,6 +192,9 @@ pub enum SocialChainError {
     #[msg("Reputation reason required")]
     ReputationReasonRequired,
     
+    #[msg("Insufficient reputation for reward claim")]
+    InsufficientReputation,
+    
     // ========== GENERAL ERRORS ==========
     #[msg("Arithmetic overflow")]
     ArithmeticOverflow,

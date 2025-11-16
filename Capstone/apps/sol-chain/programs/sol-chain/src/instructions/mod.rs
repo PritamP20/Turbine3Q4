@@ -7,6 +7,7 @@ pub mod events;
 pub mod social;
 pub mod payment;
 pub mod treasury;
+pub mod reward;
 
 pub use community::*;
 pub use member::*;
@@ -17,3 +18,4 @@ pub use events::*;
 pub use social::*;
 pub use payment::*;
 pub use treasury::*;
+pub use reward::*;

@@ -1,3 +1,4 @@
+// EventsManagement.tsx - Include all the original logic from document index 5
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -52,11 +53,10 @@ export function EventsManagement({ communityId }: EventsManagementProps) {
       const provider = new AnchorProvider(connection, wallet, {});
       const program = getProgram(provider);
 
-      // Fetch all events for this community
       const eventAccounts = await (program.account as any).event.all([
         {
           memcmp: {
-            offset: 8, // Discriminator
+            offset: 8,
             bytes: communityId,
           }
         }
@@ -108,23 +108,18 @@ export function EventsManagement({ communityId }: EventsManagementProps) {
       const program = getProgram(provider);
 
       const communityPda = new PublicKey(communityId);
-      
-      // Fetch community to get name
       const community = await (program.account as any).community.fetch(communityPda);
       
-      // Derive event PDA
       const [eventPda] = PublicKey.findProgramAddressSync(
         [Buffer.from('event'), communityPda.toBuffer(), Buffer.from(formData.name)],
         program.programId
       );
 
-      // Derive member PDA
       const [memberPda] = PublicKey.findProgramAddressSync(
         [Buffer.from('member'), communityPda.toBuffer(), wallet.publicKey.toBuffer()],
         program.programId
       );
 
-      // Convert times to Unix timestamps
       const startTime = new BN(Math.floor(new Date(formData.startTime).getTime() / 1000));
       const endTime = new BN(Math.floor(new Date(formData.endTime).getTime() / 1000));
       
@@ -160,7 +155,6 @@ export function EventsManagement({ communityId }: EventsManagementProps) {
         tokenReward: '',
       });
       
-      // Refresh events list
       setTimeout(() => fetchEvents(), 2000);
     } catch (error: any) {
       console.error('Error creating event:', error);
@@ -205,33 +199,38 @@ export function EventsManagement({ communityId }: EventsManagementProps) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Events Management</h2>
+        <h2 className="text-3xl font-black text-black">EVENTS MANAGEMENT</h2>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
           disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors font-medium disabled:opacity-50"
+          className="bg-lime-400 text-black px-6 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all disabled:opacity-50"
         >
-          {showCreateForm ? 'Cancel' : '+ Create Event'}
+          {showCreateForm ? '✕ CANCEL' : '+ CREATE EVENT'}
         </button>
       </div>
 
       {message && (
-        <div className={`mb-6 p-4 rounded-lg ${
-          message.includes('Error') 
-            ? 'bg-red-50 dark:bg-red-950 text-red-900 dark:text-red-100 border border-red-200 dark:border-red-800' 
-            : 'bg-green-50 dark:bg-green-950 text-green-900 dark:text-green-100 border border-green-200 dark:border-green-800'
+        <div className={`mb-6 p-4 border-4 border-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
+          message.includes('Error') ? 'bg-red-400' : 'bg-lime-400'
         }`}>
-          {message}
+          <div className="flex items-center justify-between">
+            <span className="text-black">{message}</span>
+            <button onClick={() => setMessage('')} className="text-black hover:bg-black hover:text-white p-1 border-2 border-black">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
       )}
 
       {showCreateForm && (
-        <form onSubmit={handleCreateEvent} className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-6 mb-6 border border-zinc-200 dark:border-zinc-700">
-          <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50 mb-4">Create New Event</h3>
+        <form onSubmit={handleCreateEvent} className="bg-yellow-50 border-4 border-black p-6 mb-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+          <h3 className="text-2xl font-black text-black mb-6 pb-3 border-b-4 border-black">CREATE NEW EVENT</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Event Name *
               </label>
               <input
@@ -239,39 +238,39 @@ export function EventsManagement({ communityId }: EventsManagementProps) {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-lg px-4 py-2 text-zinc-900 dark:text-zinc-50"
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold focus:outline-none focus:border-cyan-400"
                 placeholder="Community Meetup"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Token Reward (optional)
               </label>
               <input
                 type="number"
                 value={formData.tokenReward}
                 onChange={(e) => setFormData({ ...formData, tokenReward: e.target.value })}
-                className="w-full bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-lg px-4 py-2 text-zinc-900 dark:text-zinc-50"
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold focus:outline-none focus:border-cyan-400"
                 placeholder="100"
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Description *
               </label>
               <textarea
                 required
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-lg px-4 py-2 text-zinc-900 dark:text-zinc-50 h-24"
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold h-24 focus:outline-none focus:border-cyan-400"
                 placeholder="Event description..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Start Time *
               </label>
               <input
@@ -279,12 +278,12 @@ export function EventsManagement({ communityId }: EventsManagementProps) {
                 required
                 value={formData.startTime}
                 onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                className="w-full bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-lg px-4 py-2 text-zinc-900 dark:text-zinc-50"
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold focus:outline-none focus:border-cyan-400"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 End Time *
               </label>
               <input
@@ -292,19 +291,19 @@ export function EventsManagement({ communityId }: EventsManagementProps) {
                 required
                 value={formData.endTime}
                 onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                className="w-full bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-lg px-4 py-2 text-zinc-900 dark:text-zinc-50"
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold focus:outline-none focus:border-cyan-400"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Max Attendees (optional)
               </label>
               <input
                 type="number"
                 value={formData.maxAttendees}
                 onChange={(e) => setFormData({ ...formData, maxAttendees: e.target.value })}
-                className="w-full bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-lg px-4 py-2 text-zinc-900 dark:text-zinc-50"
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold focus:outline-none focus:border-cyan-400"
                 placeholder="50"
               />
             </div>
@@ -314,16 +313,16 @@ export function EventsManagement({ communityId }: EventsManagementProps) {
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors font-medium disabled:opacity-50"
+              className="bg-cyan-400 text-black px-8 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all disabled:opacity-50"
             >
-              {loading ? 'Creating...' : 'Create Event'}
+              {loading ? 'CREATING...' : 'CREATE EVENT'}
             </button>
             <button
               type="button"
               onClick={() => setShowCreateForm(false)}
-              className="bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 text-zinc-900 dark:text-zinc-50 px-6 py-2 rounded-lg transition-colors font-medium"
+              className="bg-gray-200 text-black px-8 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
             >
-              Cancel
+              CANCEL
             </button>
           </div>
         </form>
@@ -333,49 +332,52 @@ export function EventsManagement({ communityId }: EventsManagementProps) {
       <div className="space-y-4">
         {loading && events.length === 0 ? (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-            <p className="text-zinc-600 dark:text-zinc-400">Loading events...</p>
+            <div className="w-24 h-24 border-8 border-black border-t-cyan-400 rounded-full animate-spin mx-auto mb-6"></div>
+            <p className="text-xl font-black text-black">LOADING EVENTS...</p>
           </div>
         ) : events.length === 0 ? (
-          <div className="text-center py-12 text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700">
-            <p className="text-lg">No events created yet</p>
-            <p className="text-sm mt-2">Create your first event to get started</p>
+          <div className="text-center py-12 bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <div className="w-20 h-20 bg-pink-400 border-4 border-black mx-auto mb-4 flex items-center justify-center text-4xl">
+              📅
+            </div>
+            <p className="text-xl font-black text-black mb-2">NO EVENTS CREATED YET</p>
+            <p className="text-sm font-bold text-black">Create your first event to get started</p>
           </div>
         ) : (
           events.map((event) => (
-            <div key={event.id} className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-6 border border-zinc-200 dark:border-zinc-700">
+            <div key={event.id} className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">{event.name}</h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      event.status === 'active' ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' :
-                      event.status === 'upcoming' ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' :
-                      'bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300'
+                  <div className="flex items-center gap-3 mb-3">
+                    <h3 className="text-2xl font-black text-black">{event.name}</h3>
+                    <span className={`px-3 py-1 text-xs font-black border-2 border-black ${
+                      event.status === 'active' ? 'bg-lime-400 text-black' :
+                      event.status === 'upcoming' ? 'bg-cyan-400 text-black' :
+                      'bg-gray-300 text-black'
                     }`}>
-                      {event.status}
+                      {event.status.toUpperCase()}
                     </span>
                   </div>
-                  <p className="text-zinc-600 dark:text-zinc-400 mb-4">{event.description}</p>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <span className="text-zinc-500 dark:text-zinc-400">Start:</span>
-                      <p className="text-zinc-900 dark:text-zinc-50">{event.startTime.toLocaleString()}</p>
+                  <p className="text-black font-bold mb-4">{event.description}</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="bg-gray-100 border-2 border-black p-2">
+                      <span className="text-xs font-black text-black block mb-1">START</span>
+                      <p className="text-sm font-bold text-black">{event.startTime.toLocaleString()}</p>
                     </div>
-                    <div>
-                      <span className="text-zinc-500 dark:text-zinc-400">End:</span>
-                      <p className="text-zinc-900 dark:text-zinc-50">{event.endTime.toLocaleString()}</p>
+                    <div className="bg-gray-100 border-2 border-black p-2">
+                      <span className="text-xs font-black text-black block mb-1">END</span>
+                      <p className="text-sm font-bold text-black">{event.endTime.toLocaleString()}</p>
                     </div>
-                    <div>
-                      <span className="text-zinc-500 dark:text-zinc-400">Attendees:</span>
-                      <p className="text-zinc-900 dark:text-zinc-50">
+                    <div className="bg-gray-100 border-2 border-black p-2">
+                      <span className="text-xs font-black text-black block mb-1">ATTENDEES</span>
+                      <p className="text-sm font-bold text-black">
                         {event.attendees}{event.maxAttendees ? ` / ${event.maxAttendees}` : ''}
                       </p>
                     </div>
                     {event.tokenReward && (
-                      <div>
-                        <span className="text-zinc-500 dark:text-zinc-400">Reward:</span>
-                        <p className="text-zinc-900 dark:text-zinc-50">{event.tokenReward} tokens</p>
+                      <div className="bg-gray-100 border-2 border-black p-2">
+                        <span className="text-xs font-black text-black block mb-1">REWARD</span>
+                        <p className="text-sm font-bold text-black">{event.tokenReward} tokens</p>
                       </div>
                     )}
                   </div>
@@ -385,9 +387,9 @@ export function EventsManagement({ communityId }: EventsManagementProps) {
                     <button 
                       onClick={() => handleCloseEvent(event.id, event.name)}
                       disabled={loading}
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors font-medium disabled:opacity-50"
+                      className="bg-red-400 text-black px-4 py-2 font-black text-sm border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-50"
                     >
-                      Close Event
+                      CLOSE
                     </button>
                   )}
                 </div>

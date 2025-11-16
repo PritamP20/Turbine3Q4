@@ -1,3 +1,4 @@
+// MemberManagement.tsx - FULL VERSION with Neo Brutalism
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -47,24 +48,21 @@ export function MemberManagement({ communityId }: MemberManagementProps) {
 
       const communityPda = new PublicKey(communityId);
 
-      // Fetch all members for this community
       const memberAccounts = await (program.account as any).member.all([
         {
           memcmp: {
-            offset: 8, // Discriminator
+            offset: 8,
             bytes: communityPda.toBase58(),
           }
         }
       ]);
 
-      // Fetch community to get token mint
       const community = await (program.account as any).community.fetch(communityPda);
 
       const membersData: Member[] = await Promise.all(
         memberAccounts.map(async (account: any) => {
           const memberData = account.account;
           
-          // Try to fetch token balance
           let tokenBalance = 0;
           try {
             const [memberTokenAccount] = PublicKey.findProgramAddressSync(
@@ -89,8 +87,8 @@ export function MemberManagement({ communityId }: MemberManagementProps) {
             joinedAt: new Date(memberData.joinedAt.toNumber() * 1000),
             tokenBalance,
             reputation: memberData.reputation,
-            nfcCards: 0, // TODO: Count NFC cards
-            isActive: true, // TODO: Determine activity
+            nfcCards: 0,
+            isActive: true,
           };
         })
       );
@@ -156,28 +154,33 @@ export function MemberManagement({ communityId }: MemberManagementProps) {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-6">Member Management</h2>
+      <h2 className="text-3xl font-black text-black mb-6">MEMBER MANAGEMENT</h2>
 
       {message && (
-        <div className={`mb-6 p-4 rounded-lg ${
-          message.includes('Error') 
-            ? 'bg-red-50 dark:bg-red-950 text-red-900 dark:text-red-100 border border-red-200 dark:border-red-800' 
-            : 'bg-green-50 dark:bg-green-950 text-green-900 dark:text-green-100 border border-green-200 dark:border-green-800'
+        <div className={`mb-6 p-4 border-4 border-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
+          message.includes('Error') ? 'bg-red-400' : 'bg-lime-400'
         }`}>
-          {message}
+          <div className="flex items-center justify-between">
+            <span className="text-black">{message}</span>
+            <button onClick={() => setMessage('')} className="text-black hover:bg-black hover:text-white p-1 border-2 border-black">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
       )}
 
       {/* Search and Filters */}
-      <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4 mb-6 border border-zinc-200 dark:border-zinc-700">
+      <div className="bg-cyan-50 border-4 border-black p-4 mb-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by name or address..."
-              className="w-full bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-lg px-4 py-2 text-zinc-900 dark:text-zinc-50"
+              placeholder="SEARCH BY NAME OR ADDRESS..."
+              className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold placeholder:text-gray-400 focus:outline-none focus:border-cyan-400"
             />
           </div>
           <div className="flex gap-2">
@@ -185,10 +188,10 @@ export function MemberManagement({ communityId }: MemberManagementProps) {
               <button
                 key={status}
                 onClick={() => setFilterStatus(status as typeof filterStatus)}
-                className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${
+                className={`px-6 py-3 font-black uppercase border-4 border-black transition-all ${
                   filterStatus === status
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-600'
+                    ? 'bg-cyan-400 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                    : 'bg-white text-black hover:bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                 }`}
               >
                 {status}
@@ -202,47 +205,52 @@ export function MemberManagement({ communityId }: MemberManagementProps) {
       <div className="space-y-4">
         {loading && members.length === 0 ? (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-            <p className="text-zinc-600 dark:text-zinc-400">Loading members...</p>
+            <div className="w-24 h-24 border-8 border-black border-t-cyan-400 rounded-full animate-spin mx-auto mb-6"></div>
+            <p className="text-xl font-black text-black">LOADING MEMBERS...</p>
           </div>
         ) : filteredMembers.length === 0 ? (
-          <div className="text-center py-12 text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700">
-            <p className="text-lg">No members found</p>
-            <p className="text-sm mt-2">
+          <div className="text-center py-12 bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <div className="w-20 h-20 bg-pink-400 border-4 border-black mx-auto mb-4 flex items-center justify-center text-4xl">
+              👥
+            </div>
+            <p className="text-xl font-black text-black mb-2">NO MEMBERS FOUND</p>
+            <p className="text-sm font-bold text-black">
               {searchQuery ? 'Try adjusting your search' : 'Members will appear here once they join'}
             </p>
           </div>
         ) : (
           filteredMembers.map((member) => (
-            <div key={member.id} className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-6 border border-zinc-200 dark:border-zinc-700">
+            <div key={member.id} className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">{member.name}</h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      member.isActive ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300'
+                  <div className="flex items-center gap-3 mb-3">
+                    <h3 className="text-2xl font-black text-black">{member.name}</h3>
+                    <span className={`px-3 py-1 text-xs font-black border-2 border-black ${
+                      member.isActive ? 'bg-lime-400 text-black' : 'bg-gray-300 text-black'
                     }`}>
-                      {member.isActive ? 'Active' : 'Inactive'}
+                      {member.isActive ? 'ACTIVE' : 'INACTIVE'}
                     </span>
                   </div>
-                  <p className="text-zinc-600 dark:text-zinc-400 text-sm font-mono mb-4">{member.address}</p>
+                  <p className="text-black text-sm font-mono font-bold mb-4 bg-gray-100 p-2 border-2 border-black">
+                    {member.address}
+                  </p>
                   
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <span className="text-zinc-500 dark:text-zinc-400">Joined:</span>
-                      <p className="text-zinc-900 dark:text-zinc-50">{member.joinedAt.toLocaleDateString()}</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="bg-gray-50 border-2 border-black p-2">
+                      <span className="text-xs font-black text-black block mb-1">JOINED</span>
+                      <p className="text-sm font-bold text-black">{member.joinedAt.toLocaleDateString()}</p>
                     </div>
-                    <div>
-                      <span className="text-zinc-500 dark:text-zinc-400">Token Balance:</span>
-                      <p className="text-zinc-900 dark:text-zinc-50">{member.tokenBalance.toLocaleString()}</p>
+                    <div className="bg-gray-50 border-2 border-black p-2">
+                      <span className="text-xs font-black text-black block mb-1">TOKENS</span>
+                      <p className="text-sm font-bold text-black">{member.tokenBalance.toLocaleString()}</p>
                     </div>
-                    <div>
-                      <span className="text-zinc-500 dark:text-zinc-400">Reputation:</span>
-                      <p className="text-zinc-900 dark:text-zinc-50">{member.reputation}</p>
+                    <div className="bg-gray-50 border-2 border-black p-2">
+                      <span className="text-xs font-black text-black block mb-1">REPUTATION</span>
+                      <p className="text-sm font-bold text-black">{member.reputation}</p>
                     </div>
-                    <div>
-                      <span className="text-zinc-500 dark:text-zinc-400">NFC Cards:</span>
-                      <p className="text-zinc-900 dark:text-zinc-50">{member.nfcCards}</p>
+                    <div className="bg-gray-50 border-2 border-black p-2">
+                      <span className="text-xs font-black text-black block mb-1">NFC CARDS</span>
+                      <p className="text-sm font-bold text-black">{member.nfcCards}</p>
                     </div>
                   </div>
                 </div>
@@ -251,16 +259,16 @@ export function MemberManagement({ communityId }: MemberManagementProps) {
                   <button
                     onClick={() => handleUpdateReputation(member.id, 10)}
                     disabled={loading}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors font-medium disabled:opacity-50"
+                    className="bg-lime-400 text-black px-4 py-3 font-black text-sm border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-50"
                   >
-                    +10 Rep
+                    +10 REP
                   </button>
                   <button
                     onClick={() => handleUpdateReputation(member.id, -10)}
                     disabled={loading}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors font-medium disabled:opacity-50"
+                    className="bg-red-400 text-black px-4 py-3 font-black text-sm border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-50"
                   >
-                    -10 Rep
+                    -10 REP
                   </button>
                 </div>
               </div>
@@ -271,25 +279,25 @@ export function MemberManagement({ communityId }: MemberManagementProps) {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-        <div className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-4 border border-zinc-200 dark:border-zinc-700">
-          <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-1">Total Members</p>
-          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{members.length}</p>
+        <div className="bg-cyan-400 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-black text-sm font-black mb-1">TOTAL MEMBERS</p>
+          <p className="text-3xl font-black text-black">{members.length}</p>
         </div>
-        <div className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-4 border border-zinc-200 dark:border-zinc-700">
-          <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-1">Active Members</p>
-          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+        <div className="bg-yellow-400 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-black text-sm font-black mb-1">ACTIVE MEMBERS</p>
+          <p className="text-3xl font-black text-black">
             {members.filter(m => m.isActive).length}
           </p>
         </div>
-        <div className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-4 border border-zinc-200 dark:border-zinc-700">
-          <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-1">Total Tokens</p>
-          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+        <div className="bg-pink-400 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-black text-sm font-black mb-1">TOTAL TOKENS</p>
+          <p className="text-3xl font-black text-black">
             {members.reduce((sum, m) => sum + m.tokenBalance, 0).toLocaleString()}
           </p>
         </div>
-        <div className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-4 border border-zinc-200 dark:border-zinc-700">
-          <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-1">Avg Reputation</p>
-          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+        <div className="bg-lime-400 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-black text-sm font-black mb-1">AVG REPUTATION</p>
+          <p className="text-3xl font-black text-black">
             {members.length > 0 
               ? Math.round(members.reduce((sum, m) => sum + m.reputation, 0) / members.length)
               : 0

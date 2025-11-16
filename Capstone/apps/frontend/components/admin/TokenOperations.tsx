@@ -1,3 +1,4 @@
+// TokenOperations.tsx - FULL VERSION with Neo Brutalism
 'use client';
 
 import { useState } from 'react';
@@ -18,7 +19,6 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
 
   const handleTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Integrate with contract
     console.log('Transferring tokens for community:', communityId, transferData);
     setActiveOperation(null);
     setTransferData({ recipient: '', amount: '', memo: '' });
@@ -26,7 +26,6 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
 
   const handleBatchTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Integrate with contract
     console.log('Batch transfer for community:', communityId, batchTransfers);
     setActiveOperation(null);
     setBatchTransfers([{ recipient: '', amount: '' }]);
@@ -34,7 +33,6 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
 
   const handleBurn = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Integrate with contract
     console.log('Burning tokens for community:', communityId, burnAmount);
     setActiveOperation(null);
     setBurnAmount('');
@@ -58,22 +56,22 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
     <div>
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-2">Token Operations</h2>
-          <p className="text-zinc-600 dark:text-zinc-400 text-sm">
+          <h2 className="text-3xl font-black text-black mb-2">TOKEN OPERATIONS</h2>
+          <p className="text-lg font-bold text-black">
             Manage your community's custom SPL token
           </p>
         </div>
       </div>
 
       {/* Info Banner */}
-      <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
-        <div className="flex items-start gap-3">
-          <span className="text-2xl">ℹ️</span>
+      <div className="bg-cyan-100 border-4 border-black p-6 mb-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <div className="flex items-start gap-4">
+          <span className="text-4xl">ℹ️</span>
           <div>
-            <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
-              Community Token System
+            <h3 className="font-black text-black text-lg mb-2">
+              COMMUNITY TOKEN SYSTEM
             </h3>
-            <p className="text-sm text-blue-800 dark:text-blue-200">
+            <p className="font-bold text-black">
               Each community has its own custom SPL token created automatically. Use these operations to manage token distribution, rewards, and supply.
             </p>
           </div>
@@ -84,41 +82,41 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <button
           onClick={() => setActiveOperation('transfer')}
-          className="bg-purple-600 hover:bg-purple-700 text-white p-6 rounded-lg transition-colors text-left"
+          className="bg-cyan-400 border-4 border-black p-6 text-left shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
         >
-          <div className="text-3xl mb-2">💸</div>
-          <h3 className="text-xl font-semibold mb-1">Transfer Tokens</h3>
-          <p className="text-purple-200 text-sm">Send tokens to a single recipient</p>
+          <div className="text-5xl mb-3">💸</div>
+          <h3 className="text-xl font-black text-black mb-2">TRANSFER TOKENS</h3>
+          <p className="text-black font-bold text-sm">Send tokens to a single recipient</p>
         </button>
 
         <button
           onClick={() => setActiveOperation('batch')}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white p-6 rounded-lg transition-colors text-left"
+          className="bg-yellow-400 border-4 border-black p-6 text-left shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
         >
-          <div className="text-3xl mb-2">📦</div>
-          <h3 className="text-xl font-semibold mb-1">Batch Transfer</h3>
-          <p className="text-indigo-200 text-sm">Send tokens to multiple recipients</p>
+          <div className="text-5xl mb-3">📦</div>
+          <h3 className="text-xl font-black text-black mb-2">BATCH TRANSFER</h3>
+          <p className="text-black font-bold text-sm">Send tokens to multiple recipients</p>
         </button>
 
         <button
           onClick={() => setActiveOperation('burn')}
-          className="bg-red-600 hover:bg-red-700 text-white p-6 rounded-lg transition-colors text-left"
+          className="bg-red-400 border-4 border-black p-6 text-left shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
         >
-          <div className="text-3xl mb-2">🔥</div>
-          <h3 className="text-xl font-semibold mb-1">Burn Tokens</h3>
-          <p className="text-red-200 text-sm">Permanently remove tokens from supply</p>
+          <div className="text-5xl mb-3">🔥</div>
+          <h3 className="text-xl font-black text-black mb-2">BURN TOKENS</h3>
+          <p className="text-black font-bold text-sm">Permanently remove tokens from supply</p>
         </button>
       </div>
 
       {/* Single Transfer Form */}
       {activeOperation === 'transfer' && (
-        <form onSubmit={handleTransfer} className="bg-gray-800 rounded-lg p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold text-white">Transfer Tokens</h3>
+        <form onSubmit={handleTransfer} className="bg-cyan-50 border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex justify-between items-center mb-6 pb-4 border-b-4 border-black">
+            <h3 className="text-2xl font-black text-black">TRANSFER TOKENS</h3>
             <button
               type="button"
               onClick={() => setActiveOperation(null)}
-              className="text-gray-400 hover:text-white"
+              className="text-black hover:bg-black hover:text-cyan-400 p-2 border-2 border-black font-black text-xl"
             >
               ✕
             </button>
@@ -126,7 +124,7 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Recipient Address *
               </label>
               <input
@@ -134,13 +132,13 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
                 required
                 value={transferData.recipient}
                 onChange={(e) => setTransferData({ ...transferData, recipient: e.target.value })}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white font-mono text-sm"
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-mono font-bold text-sm focus:outline-none focus:border-cyan-400"
                 placeholder="Solana address..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Amount *
               </label>
               <input
@@ -148,20 +146,20 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
                 required
                 value={transferData.amount}
                 onChange={(e) => setTransferData({ ...transferData, amount: e.target.value })}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white"
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold focus:outline-none focus:border-cyan-400"
                 placeholder="0"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Memo (optional)
               </label>
               <input
                 type="text"
                 value={transferData.memo}
                 onChange={(e) => setTransferData({ ...transferData, memo: e.target.value })}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white"
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold focus:outline-none focus:border-cyan-400"
                 placeholder="Transfer note..."
               />
             </div>
@@ -170,16 +168,16 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
           <div className="flex gap-3 mt-6">
             <button
               type="submit"
-              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-cyan-400 text-black px-8 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
             >
-              Transfer
+              TRANSFER
             </button>
             <button
               type="button"
               onClick={() => setActiveOperation(null)}
-              className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-gray-200 text-black px-8 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
             >
-              Cancel
+              CANCEL
             </button>
           </div>
         </form>
@@ -187,13 +185,13 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
 
       {/* Batch Transfer Form */}
       {activeOperation === 'batch' && (
-        <form onSubmit={handleBatchTransfer} className="bg-gray-800 rounded-lg p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold text-white">Batch Transfer</h3>
+        <form onSubmit={handleBatchTransfer} className="bg-yellow-50 border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex justify-between items-center mb-6 pb-4 border-b-4 border-black">
+            <h3 className="text-2xl font-black text-black">BATCH TRANSFER</h3>
             <button
               type="button"
               onClick={() => setActiveOperation(null)}
-              className="text-gray-400 hover:text-white"
+              className="text-black hover:bg-black hover:text-yellow-400 p-2 border-2 border-black font-black text-xl"
             >
               ✕
             </button>
@@ -208,7 +206,7 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
                     required
                     value={transfer.recipient}
                     onChange={(e) => updateBatchRecipient(index, 'recipient', e.target.value)}
-                    className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white font-mono text-sm"
+                    className="bg-white border-4 border-black px-4 py-3 text-black font-mono font-bold text-sm focus:outline-none focus:border-yellow-400"
                     placeholder="Recipient address..."
                   />
                   <input
@@ -216,7 +214,7 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
                     required
                     value={transfer.amount}
                     onChange={(e) => updateBatchRecipient(index, 'amount', e.target.value)}
-                    className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white"
+                    className="bg-white border-4 border-black px-4 py-3 text-black font-bold focus:outline-none focus:border-yellow-400"
                     placeholder="Amount"
                   />
                 </div>
@@ -224,7 +222,7 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
                   <button
                     type="button"
                     onClick={() => removeBatchRecipient(index)}
-                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors"
+                    className="bg-red-400 text-black px-4 py-3 font-black border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                   >
                     ✕
                   </button>
@@ -236,24 +234,24 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
           <button
             type="button"
             onClick={addBatchRecipient}
-            className="mt-4 text-purple-400 hover:text-purple-300 text-sm"
+            className="mt-4 text-black font-black text-sm bg-yellow-200 border-2 border-black px-4 py-2 hover:bg-yellow-300 transition-colors"
           >
-            + Add Recipient
+            + ADD RECIPIENT
           </button>
 
           <div className="flex gap-3 mt-6">
             <button
               type="submit"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-yellow-400 text-black px-8 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
             >
-              Batch Transfer
+              BATCH TRANSFER
             </button>
             <button
               type="button"
               onClick={() => setActiveOperation(null)}
-              className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-gray-200 text-black px-8 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
             >
-              Cancel
+              CANCEL
             </button>
           </div>
         </form>
@@ -261,20 +259,20 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
 
       {/* Burn Form */}
       {activeOperation === 'burn' && (
-        <form onSubmit={handleBurn} className="bg-gray-800 rounded-lg p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold text-white">Burn Tokens</h3>
+        <form onSubmit={handleBurn} className="bg-red-50 border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex justify-between items-center mb-6 pb-4 border-b-4 border-black">
+            <h3 className="text-2xl font-black text-black">BURN TOKENS</h3>
             <button
               type="button"
               onClick={() => setActiveOperation(null)}
-              className="text-gray-400 hover:text-white"
+              className="text-black hover:bg-black hover:text-red-400 p-2 border-2 border-black font-black text-xl"
             >
               ✕
             </button>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-black text-black mb-2 uppercase">
               Amount to Burn *
             </label>
             <input
@@ -282,27 +280,27 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
               required
               value={burnAmount}
               onChange={(e) => setBurnAmount(e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white"
+              className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold focus:outline-none focus:border-red-400"
               placeholder="0"
             />
-            <p className="text-yellow-500 text-xs mt-2">
-              ⚠️ Warning: Burned tokens are permanently removed and cannot be recovered
+            <p className="text-black text-xs mt-3 font-black bg-yellow-300 border-2 border-black p-3">
+              ⚠️ WARNING: BURNED TOKENS ARE PERMANENTLY REMOVED AND CANNOT BE RECOVERED
             </p>
           </div>
 
           <div className="flex gap-3 mt-6">
             <button
               type="submit"
-              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-red-400 text-black px-8 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
             >
-              Burn Tokens
+              BURN TOKENS
             </button>
             <button
               type="button"
               onClick={() => setActiveOperation(null)}
-              className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-gray-200 text-black px-8 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
             >
-              Cancel
+              CANCEL
             </button>
           </div>
         </form>
@@ -310,17 +308,17 @@ export function TokenOperations({ communityId }: TokenOperationsProps) {
 
       {/* Token Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        <div className="bg-gray-800 rounded-lg p-4">
-          <p className="text-gray-400 text-sm mb-1">Total Supply</p>
-          <p className="text-2xl font-bold text-white">0</p>
+        <div className="bg-cyan-400 border-4 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-black text-sm font-black mb-1">TOTAL SUPPLY</p>
+          <p className="text-3xl font-black text-black">0</p>
         </div>
-        <div className="bg-gray-800 rounded-lg p-4">
-          <p className="text-gray-400 text-sm mb-1">Circulating Supply</p>
-          <p className="text-2xl font-bold text-white">0</p>
+        <div className="bg-yellow-400 border-4 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-black text-sm font-black mb-1">CIRCULATING SUPPLY</p>
+          <p className="text-3xl font-black text-black">0</p>
         </div>
-        <div className="bg-gray-800 rounded-lg p-4">
-          <p className="text-gray-400 text-sm mb-1">Total Burned</p>
-          <p className="text-2xl font-bold text-white">0</p>
+        <div className="bg-pink-400 border-4 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-black text-sm font-black mb-1">TOTAL BURNED</p>
+          <p className="text-3xl font-black text-black">0</p>
         </div>
       </div>
     </div>

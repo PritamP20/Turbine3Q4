@@ -71,88 +71,112 @@ export default function GovernancePage() {
 
   if (!connected) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <p className="text-zinc-600 dark:text-zinc-400">
-          Please connect your wallet to create proposals
-        </p>
+      <div className="min-h-screen bg-white flex items-center justify-center px-4">
+        <div className="bg-yellow-300 border-6 border-black p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] max-w-md text-center">
+          <span className="text-6xl mb-4 block">🔒</span>
+          <p className="text-xl font-black text-black uppercase">
+            Connect Wallet to Create Proposals
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-16">
-      <h1 className="text-4xl font-bold text-zinc-900 dark:text-zinc-50 mb-8">
-        Create Proposal
-      </h1>
+    <div className="min-h-screen bg-white py-16 px-4">
+      <div className="max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="mb-12">
+          <h1 className="text-5xl font-black text-black uppercase mb-4" style={{ textShadow: '5px 5px 0px #FFD700' }}>
+            Create Proposal
+          </h1>
+          <p className="text-lg font-bold text-black">
+            Submit your ideas to the community for voting
+          </p>
+        </div>
 
-      <div className="bg-white dark:bg-zinc-900 rounded-lg p-8 border border-zinc-200 dark:border-zinc-800">
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-              Community Name
-            </label>
-            <input
-              type="text"
-              value={communityName}
-              onChange={(e) => setCommunityName(e.target.value)}
-              className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50"
-              placeholder="TestDAO"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-              Proposal Title
-            </label>
-            <input
-              type="text"
-              value={proposalTitle}
-              onChange={(e) => setProposalTitle(e.target.value)}
-              className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50"
-              placeholder="Increase treasury allocation"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-              Description
-            </label>
-            <textarea
-              value={proposalDescription}
-              onChange={(e) => setProposalDescription(e.target.value)}
-              className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50"
-              rows={4}
-              placeholder="Detailed description of the proposal..."
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-              Voting Period (days)
-            </label>
-            <input
-              type="number"
-              value={votingPeriod}
-              onChange={(e) => setVotingPeriod(Number(e.target.value))}
-              className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50"
-              min={1}
-              max={30}
-            />
-          </div>
-
-          <button
-            onClick={createProposal}
-            disabled={loading || !communityName || !proposalTitle || !proposalDescription}
-            className="w-full bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900 py-3 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? "Creating..." : "Create Proposal"}
-          </button>
-
-          {message && (
-            <div className={`p-4 rounded-lg ${message.includes("Error") ? "bg-red-50 dark:bg-red-950 text-red-900 dark:text-red-100" : "bg-green-50 dark:bg-green-950 text-green-900 dark:text-green-100"}`}>
-              {message}
+        {/* Form Container */}
+        <div className="bg-cyan-200 border-6 border-black p-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+          <div className="space-y-6">
+            {/* Community Name */}
+            <div>
+              <label className="block text-sm font-black text-black mb-2 uppercase">
+                Community Name
+              </label>
+              <input
+                type="text"
+                value={communityName}
+                onChange={(e) => setCommunityName(e.target.value)}
+                className="w-full px-4 py-3 border-4 border-black bg-white text-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none"
+                placeholder="TestDAO"
+              />
             </div>
-          )}
+
+            {/* Proposal Title */}
+            <div>
+              <label className="block text-sm font-black text-black mb-2 uppercase">
+                Proposal Title
+              </label>
+              <input
+                type="text"
+                value={proposalTitle}
+                onChange={(e) => setProposalTitle(e.target.value)}
+                className="w-full px-4 py-3 border-4 border-black bg-white text-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none"
+                placeholder="Increase treasury allocation"
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-black text-black mb-2 uppercase">
+                Description
+              </label>
+              <textarea
+                value={proposalDescription}
+                onChange={(e) => setProposalDescription(e.target.value)}
+                className="w-full px-4 py-3 border-4 border-black bg-white text-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none resize-none"
+                rows={5}
+                placeholder="Detailed description of the proposal..."
+              />
+            </div>
+
+            {/* Voting Period */}
+            <div>
+              <label className="block text-sm font-black text-black mb-2 uppercase">
+                Voting Period (Days)
+              </label>
+              <input
+                type="number"
+                value={votingPeriod}
+                onChange={(e) => setVotingPeriod(Number(e.target.value))}
+                className="w-full px-4 py-3 border-4 border-black bg-white text-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none"
+                min={1}
+                max={30}
+              />
+            </div>
+
+            {/* Submit Button */}
+            <button
+              onClick={createProposal}
+              disabled={loading || !communityName || !proposalTitle || !proposalDescription}
+              className="w-full bg-black text-white border-4 border-black py-4 font-black text-lg uppercase hover:bg-purple-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1"
+            >
+              {loading ? "Creating..." : "Create Proposal"}
+            </button>
+
+            {/* Message Display */}
+            {message && (
+              <div
+                className={`p-4 border-4 border-black font-bold shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${
+                  message.includes("Error")
+                    ? "bg-red-300 text-black"
+                    : "bg-green-300 text-black"
+                }`}
+              >
+                {message}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

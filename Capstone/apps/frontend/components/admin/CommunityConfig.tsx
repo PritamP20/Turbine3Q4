@@ -1,3 +1,4 @@
+// CommunityConfig.tsx
 'use client';
 
 import { useState } from 'react';
@@ -30,7 +31,6 @@ export function CommunityConfig({ community }: CommunityConfigProps) {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Integrate with contract
     console.log('Updating config for community:', community.id, config);
     setIsEditing(false);
   };
@@ -38,23 +38,23 @@ export function CommunityConfig({ community }: CommunityConfigProps) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Community Configuration</h2>
+        <h2 className="text-3xl font-black text-black">COMMUNITY CONFIGURATION</h2>
         <button
           onClick={() => setIsEditing(!isEditing)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors font-medium"
+          className="bg-cyan-400 text-black px-6 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
         >
-          {isEditing ? 'Cancel' : 'Edit Config'}
+          {isEditing ? '✕ CANCEL' : '✎ EDIT CONFIG'}
         </button>
       </div>
 
       <form onSubmit={handleUpdate} className="space-y-6">
-        {/* Current Configuration */}
-        <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-6 border border-zinc-200 dark:border-zinc-700">
-          <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50 mb-4">Basic Settings</h3>
+        {/* Basic Settings */}
+        <div className="bg-yellow-50 border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+          <h3 className="text-2xl font-black text-black mb-6 pb-3 border-b-4 border-black">BASIC SETTINGS</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Community Name
               </label>
               <input
@@ -62,12 +62,12 @@ export function CommunityConfig({ community }: CommunityConfigProps) {
                 disabled={!isEditing}
                 value={config.communityName}
                 onChange={(e) => setConfig({ ...config, communityName: e.target.value })}
-                className="w-full bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-lg px-4 py-2 text-zinc-900 dark:text-zinc-50 disabled:opacity-50"
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold disabled:opacity-50 disabled:bg-gray-100 focus:outline-none focus:border-cyan-400"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Token Symbol
               </label>
               <input
@@ -75,12 +75,12 @@ export function CommunityConfig({ community }: CommunityConfigProps) {
                 disabled={!isEditing}
                 value={config.tokenSymbol}
                 onChange={(e) => setConfig({ ...config, tokenSymbol: e.target.value })}
-                className="w-full bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-lg px-4 py-2 text-zinc-900 dark:text-zinc-50 disabled:opacity-50"
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold disabled:opacity-50 disabled:bg-gray-100 focus:outline-none focus:border-cyan-400"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Governance Threshold (%)
               </label>
               <input
@@ -90,15 +90,15 @@ export function CommunityConfig({ community }: CommunityConfigProps) {
                 disabled={!isEditing}
                 value={config.governanceThreshold}
                 onChange={(e) => setConfig({ ...config, governanceThreshold: parseInt(e.target.value) })}
-                className="w-full bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-lg px-4 py-2 text-zinc-900 dark:text-zinc-50 disabled:opacity-50"
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold disabled:opacity-50 disabled:bg-gray-100 focus:outline-none focus:border-cyan-400"
               />
-              <p className="text-zinc-500 dark:text-zinc-400 text-xs mt-1">
+              <p className="text-black text-xs mt-2 font-bold bg-cyan-100 border-2 border-black p-2">
                 Percentage of votes required to pass proposals
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
                 Transfer Fee (basis points)
               </label>
               <input
@@ -108,9 +108,9 @@ export function CommunityConfig({ community }: CommunityConfigProps) {
                 disabled={!isEditing}
                 value={config.transferFeeBps}
                 onChange={(e) => setConfig({ ...config, transferFeeBps: parseInt(e.target.value) })}
-                className="w-full bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-lg px-4 py-2 text-zinc-900 dark:text-zinc-50 disabled:opacity-50"
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold disabled:opacity-50 disabled:bg-gray-100 focus:outline-none focus:border-cyan-400"
               />
-              <p className="text-zinc-500 dark:text-zinc-400 text-xs mt-1">
+              <p className="text-black text-xs mt-2 font-bold bg-cyan-100 border-2 border-black p-2">
                 100 bps = 1% (current: {(config.transferFeeBps / 100).toFixed(2)}%)
               </p>
             </div>
@@ -118,11 +118,11 @@ export function CommunityConfig({ community }: CommunityConfigProps) {
         </div>
 
         {/* Admin Transfer */}
-        <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-6 border border-zinc-200 dark:border-zinc-700">
-          <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50 mb-4">Admin Management</h3>
+        <div className="bg-red-50 border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+          <h3 className="text-2xl font-black text-black mb-6 pb-3 border-b-4 border-black">ADMIN MANAGEMENT</h3>
           
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label className="block text-sm font-black text-black mb-2 uppercase">
               Transfer Admin Rights
             </label>
             <input
@@ -130,11 +130,11 @@ export function CommunityConfig({ community }: CommunityConfigProps) {
               disabled={!isEditing}
               value={config.newAdmin}
               onChange={(e) => setConfig({ ...config, newAdmin: e.target.value })}
-              className="w-full bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-lg px-4 py-2 text-zinc-900 dark:text-zinc-50 font-mono text-sm disabled:opacity-50"
+              className="w-full bg-white border-4 border-black px-4 py-3 text-black font-mono text-sm disabled:opacity-50 disabled:bg-gray-100 focus:outline-none focus:border-red-400"
               placeholder="New admin wallet address..."
             />
-            <p className="text-yellow-600 dark:text-yellow-500 text-xs mt-2">
-              ⚠️ Warning: Transferring admin rights is permanent and cannot be undone
+            <p className="text-black text-xs mt-2 font-black bg-yellow-300 border-2 border-black p-3">
+              ⚠️ WARNING: TRANSFERRING ADMIN RIGHTS IS PERMANENT AND CANNOT BE UNDONE
             </p>
           </div>
         </div>
@@ -143,16 +143,16 @@ export function CommunityConfig({ community }: CommunityConfigProps) {
           <div className="flex gap-3">
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors font-medium"
+              className="bg-cyan-400 text-black px-8 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
             >
-              Save Changes
+              SAVE CHANGES
             </button>
             <button
               type="button"
               onClick={() => setIsEditing(false)}
-              className="bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 text-zinc-900 dark:text-zinc-50 px-6 py-2 rounded-lg transition-colors font-medium"
+              className="bg-gray-200 text-black px-8 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
             >
-              Cancel
+              CANCEL
             </button>
           </div>
         )}
@@ -160,17 +160,17 @@ export function CommunityConfig({ community }: CommunityConfigProps) {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        <div className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-4">
-          <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-1">Total Members</p>
-          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{community.memberCount}</p>
+        <div className="bg-cyan-400 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-black text-sm font-black mb-1">TOTAL MEMBERS</p>
+          <p className="text-3xl font-black text-black">{community.memberCount}</p>
         </div>
-        <div className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-4">
-          <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-1">Active Proposals</p>
-          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">0</p>
+        <div className="bg-yellow-400 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-black text-sm font-black mb-1">ACTIVE PROPOSALS</p>
+          <p className="text-3xl font-black text-black">0</p>
         </div>
-        <div className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-4">
-          <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-1">Total Events</p>
-          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">0</p>
+        <div className="bg-pink-400 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-black text-sm font-black mb-1">TOTAL EVENTS</p>
+          <p className="text-3xl font-black text-black">0</p>
         </div>
       </div>
     </div>

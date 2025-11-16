@@ -6,7 +6,7 @@ import { useWallet, useAnchorWallet } from "@solana/wallet-adapter-react";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { getProgram, getConnection } from "@/lib/anchor-setup";
+import { getProgram, getConnection, NETWORK } from "@/lib/anchor-setup";
 import { JoinCommunityModal } from "@/components/JoinCommunityModal";
 
 interface Community {
@@ -26,7 +26,6 @@ export default function CommunitiesPage() {
   const [loading, setLoading] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   
-  // Form state
   const [communityName, setCommunityName] = useState("");
   const [tokenSymbol, setTokenSymbol] = useState("");
   const [governanceThreshold, setGovernanceThreshold] = useState(51);
@@ -39,28 +38,54 @@ export default function CommunitiesPage() {
   }, [connected]);
 
   const fetchCommunities = async () => {
+    if (!wallet) {
+      console.log("No wallet connected, skipping fetch");
+      return;
+    }
+
     setLoading(true);
+    console.log("Fetching communities from chain...");
+    
     try {
       const connection = getConnection();
-      const provider = new AnchorProvider(connection, wallet!, {});
-      const program = getProgram(provider);
-
-      // Fetch all community accounts
-      const communityAccounts = await (program.account as any).community.all();
+      console.log("Connection established to:", NETWORK);
       
-      const communitiesData: Community[] = communityAccounts.map((account: any) => ({
-        publicKey: account.publicKey.toString(),
-        name: account.account.name,
-        tokenSymbol: account.account.tokenSymbol,
-        governanceThreshold: account.account.governanceThreshold,
-        admin: account.account.admin.toString(),
-        memberCount: account.account.memberCount,
-        transferFeeBps: account.account.transferFeeBps,
-      }));
+      const provider = new AnchorProvider(connection, wallet, {});
+      const program = getProgram(provider);
+      console.log("Program ID:", program.programId.toString());
 
+      console.log("Calling program.account.community.all()...");
+      const communityAccounts = await (program.account as any).community.all();
+      console.log("Found communities:", communityAccounts.length);
+      
+      const communitiesData: Community[] = communityAccounts.map((account: any) => {
+        console.log("Community account:", {
+          publicKey: account.publicKey.toString(),
+          name: account.account.name,
+          memberCount: account.account.memberCount,
+        });
+        
+        return {
+          publicKey: account.publicKey.toString(),
+          name: account.account.name,
+          tokenSymbol: account.account.tokenSymbol,
+          governanceThreshold: account.account.governanceThreshold,
+          admin: account.account.admin.toString(),
+          memberCount: account.account.memberCount,
+          transferFeeBps: account.account.transferFeeBps,
+        };
+      });
+
+      console.log("Setting communities state with", communitiesData.length, "communities");
       setCommunities(communitiesData);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching communities:", error);
+      console.error("Error details:", {
+        message: error.message,
+        code: error.code,
+        logs: error.logs,
+      });
+      setMessage(`Error loading communities: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -119,7 +144,6 @@ export default function CommunitiesPage() {
       setTokenSymbol("");
       setShowCreateForm(false);
       
-      // Refresh communities list
       setTimeout(() => fetchCommunities(), 2000);
     } catch (error: any) {
       setMessage(`Error: ${error.message}`);
@@ -130,122 +154,160 @@ export default function CommunitiesPage() {
 
   if (!connected) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <div className="bg-white dark:bg-zinc-900 rounded-lg p-12 border border-zinc-200 dark:border-zinc-800">
-          <p className="text-xl text-zinc-600 dark:text-zinc-400 mb-4">
-            Please connect your wallet to view communities
-          </p>
+      <div className="min-h-screen bg-yellow-50 flex items-center justify-center p-4">
+        <div className="bg-white border-8 border-black p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] max-w-md w-full">
+          <div className="text-center">
+            <div className="w-20 h-20 bg-cyan-400 border-4 border-black mx-auto mb-6 flex items-center justify-center">
+              <svg className="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-black text-black mb-4">WALLET NOT CONNECTED</h2>
+            <p className="text-lg font-bold text-black">
+              Please connect your wallet to view communities
+            </p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-16">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-4xl font-bold text-zinc-900 dark:text-zinc-50 mb-2">
-            Communities
-          </h1>
-          <p className="text-zinc-600 dark:text-zinc-400">
-            Explore and join decentralized communities on Solana
-          </p>
-        </div>
-        <button
-          onClick={() => setShowCreateForm(!showCreateForm)}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
-        >
-          {showCreateForm ? "Cancel" : "+ Create Community"}
-        </button>
-      </div>
-
-      {message && (
-        <div className={`mb-6 p-4 rounded-lg ${message.includes("Error") ? "bg-red-50 dark:bg-red-950 text-red-900 dark:text-red-100" : "bg-green-50 dark:bg-green-950 text-green-900 dark:text-green-100"}`}>
-          {message}
-        </div>
-      )}
-
-      {/* Create Community Form */}
-      {showCreateForm && (
-        <div className="bg-white dark:bg-zinc-900 rounded-lg p-8 border border-zinc-200 dark:border-zinc-800 mb-8">
-          <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-6">
-            Create New Community
-          </h2>
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-                Community Name
-              </label>
-              <input
-                type="text"
-                value={communityName}
-                onChange={(e) => setCommunityName(e.target.value)}
-                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50"
-                placeholder="My DAO"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-                Token Symbol
-              </label>
-              <input
-                type="text"
-                value={tokenSymbol}
-                onChange={(e) => setTokenSymbol(e.target.value)}
-                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50"
-                placeholder="DAO"
-                maxLength={10}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-                Governance Threshold (%)
-              </label>
-              <input
-                type="number"
-                value={governanceThreshold}
-                onChange={(e) => setGovernanceThreshold(Number(e.target.value))}
-                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50"
-                min={1}
-                max={100}
-              />
-            </div>
-
+    <div className="min-h-screen bg-yellow-50 py-8 sm:py-16">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <div className="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex-1">
+            <h1 className="text-3xl sm:text-5xl font-black text-black mb-2">
+              COMMUNITIES
+            </h1>
+            <p className="text-base sm:text-lg font-bold text-black">
+              Explore and join decentralized communities on Solana
+            </p>
+          </div>
+          <div className="flex gap-3">
             <button
-              onClick={createCommunity}
-              disabled={loading || !communityName || !tokenSymbol}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              onClick={fetchCommunities}
+              disabled={loading}
+              className="bg-pink-400 text-black px-6 py-4 font-black text-lg border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all whitespace-nowrap disabled:opacity-50"
             >
-              {loading ? "Creating..." : "Create Community"}
+              {loading ? "⟳" : "↻"} REFRESH
+            </button>
+            <button
+              onClick={() => setShowCreateForm(!showCreateForm)}
+              className="bg-lime-400 text-black px-6 py-4 font-black text-lg border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all whitespace-nowrap"
+            >
+              {showCreateForm ? "✕ CANCEL" : "+ CREATE COMMUNITY"}
             </button>
           </div>
         </div>
-      )}
 
-      {/* Communities List */}
-      {loading && communities.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-zinc-600 dark:text-zinc-400">Loading communities...</p>
-        </div>
-      ) : communities.length === 0 ? (
-        <div className="bg-white dark:bg-zinc-900 rounded-lg p-12 border border-zinc-200 dark:border-zinc-800 text-center">
-          <p className="text-xl text-zinc-600 dark:text-zinc-400 mb-4">
-            No communities found
-          </p>
-          <p className="text-zinc-500 dark:text-zinc-500">
-            Be the first to create a community!
-          </p>
-        </div>
-      ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {communities.map((community) => (
-            <CommunityCard key={community.publicKey} community={community} />
-          ))}
-        </div>
-      )}
+        {/* Message Banner */}
+        {message && (
+          <div className={`mb-6 p-4 border-4 border-black font-bold shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${
+            message.includes("Error") 
+              ? "bg-red-400 text-black" 
+              : "bg-lime-400 text-black"
+          }`}>
+            <div className="flex items-center justify-between">
+              <span>{message}</span>
+              <button 
+                onClick={() => setMessage("")}
+                className="text-black hover:bg-black hover:text-white p-1 border-2 border-black transition-all"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Create Community Form */}
+        {showCreateForm && (
+          <div className="bg-white border-4 border-black p-6 sm:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-8">
+            <h2 className="text-2xl sm:text-3xl font-black text-black mb-6 pb-4 border-b-4 border-black">
+              CREATE NEW COMMUNITY
+            </h2>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-black text-black mb-2 uppercase">
+                  Community Name
+                </label>
+                <input
+                  type="text"
+                  value={communityName}
+                  onChange={(e) => setCommunityName(e.target.value)}
+                  className="w-full px-4 py-3 border-4 border-black font-bold text-black focus:outline-none focus:ring-0 focus:border-cyan-400"
+                  placeholder="My DAO"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-black text-black mb-2 uppercase">
+                  Token Symbol
+                </label>
+                <input
+                  type="text"
+                  value={tokenSymbol}
+                  onChange={(e) => setTokenSymbol(e.target.value)}
+                  className="w-full px-4 py-3 border-4 border-black font-bold text-black focus:outline-none focus:ring-0 focus:border-cyan-400"
+                  placeholder="DAO"
+                  maxLength={10}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-black text-black mb-2 uppercase">
+                  Governance Threshold (%)
+                </label>
+                <input
+                  type="number"
+                  value={governanceThreshold}
+                  onChange={(e) => setGovernanceThreshold(Number(e.target.value))}
+                  className="w-full px-4 py-3 border-4 border-black font-bold text-black focus:outline-none focus:ring-0 focus:border-cyan-400"
+                  min={1}
+                  max={100}
+                />
+              </div>
+
+              <button
+                onClick={createCommunity}
+                disabled={loading || !communityName || !tokenSymbol}
+                className="w-full bg-cyan-400 text-black py-4 font-black text-lg border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] disabled:hover:translate-x-0 disabled:hover:translate-y-0"
+              >
+                {loading ? "CREATING..." : "CREATE COMMUNITY"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Communities List */}
+        {loading && communities.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="w-24 h-24 border-8 border-black border-t-cyan-400 rounded-full animate-spin mx-auto mb-6"></div>
+            <p className="text-xl font-black text-black">LOADING COMMUNITIES...</p>
+          </div>
+        ) : communities.length === 0 ? (
+          <div className="bg-white border-4 border-black p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center">
+            <div className="w-20 h-20 bg-pink-400 border-4 border-black mx-auto mb-6 flex items-center justify-center">
+              <svg className="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-black text-black mb-2">NO COMMUNITIES FOUND</h3>
+            <p className="text-lg font-bold text-black">
+              Be the first to create a community!
+            </p>
+          </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {communities.map((community) => (
+              <CommunityCard key={community.publicKey} community={community} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -282,7 +344,6 @@ function CommunityCard({ community }: { community: Community }) {
         setIsMember(true);
       }
     } catch (error) {
-      // Not a member
       setIsMember(false);
     }
   };
@@ -300,7 +361,6 @@ function CommunityCard({ community }: { community: Community }) {
 
       const communityPda = new PublicKey(community.publicKey);
       
-      // Fetch community to get member count for NFT name
       const communityAccount = await (program.account as any).community.fetch(communityPda);
       
       const [memberPda] = PublicKey.findProgramAddressSync(
@@ -308,23 +368,20 @@ function CommunityCard({ community }: { community: Community }) {
         program.programId
       );
 
-      // Derive membership NFT mint PDA
       const [membershipNftMint] = PublicKey.findProgramAddressSync(
         [Buffer.from("membership_nft"), communityPda.toBuffer(), wallet.publicKey.toBuffer()],
         program.programId
       );
 
-      // Derive associated token account for the NFT
       const [memberNftTokenAccount] = PublicKey.findProgramAddressSync(
         [
           wallet.publicKey.toBuffer(),
           TOKEN_PROGRAM_ID.toBuffer(),
           membershipNftMint.toBuffer(),
         ],
-        new PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL") // Associated Token Program
+        new PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL")
       );
 
-      // Derive metadata account
       const METADATA_PROGRAM_ID = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
       const [nftMetadata] = PublicKey.findProgramAddressSync(
         [
@@ -335,14 +392,10 @@ function CommunityCard({ community }: { community: Community }) {
         METADATA_PROGRAM_ID
       );
 
-      // For now, use a simple metadata URI
-      // TODO: Upload image to IPFS/Arweave and use that URL
-      // Base64 images are too large for on-chain storage
       const metadataUri = imageFile 
         ? `https://nft.storage/${communityPda.toString()}/${wallet.publicKey.toString()}`
         : `https://nft.storage/${communityPda.toString()}/${wallet.publicKey.toString()}/default`;
       
-      // Store image in browser storage for display (temporary solution)
       if (imageFile) {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -390,92 +443,113 @@ function CommunityCard({ community }: { community: Community }) {
     }
   };
 
+  const cardColors = [
+    'bg-cyan-400',
+    'bg-yellow-400',
+    'bg-pink-400',
+    'bg-lime-400',
+  ];
+  
+  const colorIndex = parseInt(community.publicKey.slice(0, 8), 16) % cardColors.length;
+  const bgColor = cardColors[colorIndex];
+
   return (
     <div 
       onClick={handleCardClick}
-      className={`bg-white dark:bg-zinc-900 rounded-lg p-6 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 dark:hover:border-blue-500 transition-all hover:shadow-lg ${isMember ? 'cursor-pointer' : ''}`}
+      className={`bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all ${
+        isMember 
+          ? 'cursor-pointer hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px]' 
+          : ''
+      }`}
     >
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 mb-1">
-            {community.name}
-          </h3>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            ${community.tokenSymbol}
+      <div className={`${bgColor} border-b-4 border-black p-4`}>
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h3 className="text-2xl font-black text-black mb-1 break-words">
+              {community.name}
+            </h3>
+            <p className="text-lg font-black text-black">
+              ${community.tokenSymbol}
+            </p>
+          </div>
+          <div className="flex flex-col gap-2">
+            {isMember && (
+              <span className="px-3 py-1 bg-black text-lime-400 text-xs font-black border-2 border-black whitespace-nowrap">
+                MEMBER
+              </span>
+            )}
+            {isAdmin && (
+              <span className="px-3 py-1 bg-black text-cyan-400 text-xs font-black border-2 border-black whitespace-nowrap">
+                ADMIN
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="p-6">
+        <div className="space-y-3 mb-6">
+          <div className="flex justify-between items-center p-3 bg-gray-50 border-2 border-black">
+            <span className="font-black text-black text-sm">MEMBERS</span>
+            <span className="font-black text-black text-xl">{community.memberCount}</span>
+          </div>
+          <div className="flex justify-between items-center p-3 bg-gray-50 border-2 border-black">
+            <span className="font-black text-black text-sm">GOVERNANCE</span>
+            <span className="font-black text-black text-xl">{community.governanceThreshold}%</span>
+          </div>
+          <div className="flex justify-between items-center p-3 bg-gray-50 border-2 border-black">
+            <span className="font-black text-black text-sm">TRANSFER FEE</span>
+            <span className="font-black text-black text-xl">{community.transferFeeBps / 100}%</span>
+          </div>
+        </div>
+
+        <div className="pt-4 border-t-4 border-black mb-4">
+          <p className="text-xs font-mono font-bold text-black truncate bg-gray-100 p-2 border-2 border-black">
+            {community.publicKey}
           </p>
         </div>
-        <div className="flex gap-2">
-          {isMember && (
-            <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-medium rounded">
-              Member
-            </span>
-          )}
-          {isAdmin && (
-            <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium rounded">
-              Admin
-            </span>
-          )}
-        </div>
+
+        {message && (
+          <div className={`mb-3 p-3 border-4 border-black font-bold ${
+            message.includes("Error") 
+              ? "bg-red-400 text-black" 
+              : "bg-lime-400 text-black"
+          }`}>
+            {message}
+          </div>
+        )}
+
+        {isMember ? (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/communities/${community.publicKey}`);
+            }}
+            className="w-full py-3 bg-black text-cyan-400 font-black text-lg border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+          >
+            VIEW DASHBOARD →
+          </button>
+        ) : (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowJoinModal(true);
+            }}
+            disabled={joining}
+            className="w-full py-3 bg-cyan-400 text-black font-black text-lg border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] disabled:hover:translate-x-0 disabled:hover:translate-y-0"
+          >
+            {joining ? "JOINING..." : "JOIN COMMUNITY"}
+          </button>
+        )}
+        
+        <JoinCommunityModal
+          isOpen={showJoinModal}
+          onClose={() => setShowJoinModal(false)}
+          onJoin={joinCommunity}
+          communityName={community.name}
+          loading={joining}
+        />
       </div>
-
-      <div className="space-y-2 mb-4">
-        <div className="flex justify-between text-sm">
-          <span className="text-zinc-600 dark:text-zinc-400">Members</span>
-          <span className="font-medium text-zinc-900 dark:text-zinc-50">{community.memberCount}</span>
-        </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-zinc-600 dark:text-zinc-400">Governance</span>
-          <span className="font-medium text-zinc-900 dark:text-zinc-50">{community.governanceThreshold}%</span>
-        </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-zinc-600 dark:text-zinc-400">Transfer Fee</span>
-          <span className="font-medium text-zinc-900 dark:text-zinc-50">{community.transferFeeBps / 100}%</span>
-        </div>
-      </div>
-
-      <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 mb-4">
-        <p className="text-xs text-zinc-500 dark:text-zinc-500 truncate">
-          {community.publicKey}
-        </p>
-      </div>
-
-      {message && (
-        <div className={`mb-3 p-2 rounded text-sm ${message.includes("Error") ? "bg-red-50 dark:bg-red-950 text-red-900 dark:text-red-100" : "bg-green-50 dark:bg-green-950 text-green-900 dark:text-green-100"}`}>
-          {message}
-        </div>
-      )}
-
-      {isMember ? (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            router.push(`/communities/${community.publicKey}`);
-          }}
-          className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
-        >
-          View Dashboard
-        </button>
-      ) : (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowJoinModal(true);
-          }}
-          disabled={joining}
-          className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {joining ? "Joining..." : "Join Community"}
-        </button>
-      )}
-      
-      {/* Join Community Modal */}
-      <JoinCommunityModal
-        isOpen={showJoinModal}
-        onClose={() => setShowJoinModal(false)}
-        onJoin={joinCommunity}
-        communityName={community.name}
-        loading={joining}
-      />
     </div>
   );
 }

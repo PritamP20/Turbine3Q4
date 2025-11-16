@@ -23,10 +23,8 @@ export default function CommunityDashboardPage() {
   const [activeTab, setActiveTab] = useState<TabType>('activity');
   const [refreshError, setRefreshError] = useState<string | null>(null);
 
-  // Extract community ID from URL params
   const communityId = params.id as string;
 
-  // Use React Query hooks for data fetching
   const { data: community, isLoading: communityLoading, error: communityError } = useCommunity(communityId);
   const { data: userMembership, isLoading: membershipLoading } = useMembership(communityId);
   const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useCommunityStats(communityId);
@@ -35,13 +33,11 @@ export default function CommunityDashboardPage() {
   const loading = communityLoading || membershipLoading || statsLoading;
   const error = communityError ? "Failed to load community data" : "";
 
-  // Initialize tab from URL query params on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const searchParams = new URLSearchParams(window.location.search);
       const tabParam = searchParams.get('tab') as TabType | null;
       
-      // Validate tab parameter
       const validTabs: TabType[] = ['activity', 'members', 'leaderboard', 'events', 'chat'];
       if (tabParam && validTabs.includes(tabParam)) {
         setActiveTab(tabParam);
@@ -49,14 +45,12 @@ export default function CommunityDashboardPage() {
     }
   }, []);
 
-  // Redirect if not connected
   useEffect(() => {
     if (!connected) {
       router.push("/communities");
     }
   }, [connected, router]);
 
-  // Check membership and redirect if not a member
   useEffect(() => {
     if (!loading && !userMembership && connected) {
       setRefreshError("You must be a member to view this dashboard");
@@ -68,16 +62,11 @@ export default function CommunityDashboardPage() {
     setRefreshError(null);
     
     try {
-      // Invalidate all queries to trigger refetch
       await invalidateAll(communityId);
-      
-      // Show success feedback briefly
       await new Promise(resolve => setTimeout(resolve, 500));
     } catch (error: any) {
       console.error("Error during manual refresh:", error);
       setRefreshError("Failed to refresh dashboard. Please check your connection and try again.");
-      
-      // Auto-dismiss error after 5 seconds
       setTimeout(() => setRefreshError(null), 5000);
     }
   };
@@ -89,7 +78,6 @@ export default function CommunityDashboardPage() {
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
     
-    // Update URL query params without full page reload
     const url = new URL(window.location.href);
     url.searchParams.set('tab', tab);
     window.history.pushState({}, '', url.toString());
@@ -97,11 +85,19 @@ export default function CommunityDashboardPage() {
 
   if (!connected) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <div className="bg-white dark:bg-zinc-900 rounded-lg p-12 border border-zinc-200 dark:border-zinc-800">
-          <p className="text-xl text-zinc-600 dark:text-zinc-400">
-            Please connect your wallet to view the dashboard
-          </p>
+      <div className="min-h-screen bg-yellow-50 flex items-center justify-center p-4">
+        <div className="bg-white border-8 border-black p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] max-w-md w-full">
+          <div className="text-center">
+            <div className="w-20 h-20 bg-cyan-400 border-4 border-black mx-auto mb-6 flex items-center justify-center">
+              <svg className="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-black text-black mb-4">WALLET NOT CONNECTED</h2>
+            <p className="text-lg font-bold text-black">
+              Please connect your wallet to view the dashboard
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -109,10 +105,10 @@ export default function CommunityDashboardPage() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-zinc-600 dark:text-zinc-400">Loading dashboard...</p>
+      <div className="min-h-screen bg-yellow-50 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="w-24 h-24 border-8 border-black border-t-cyan-400 rounded-full animate-spin mx-auto mb-6"></div>
+          <p className="text-xl font-black text-black">LOADING DASHBOARD...</p>
         </div>
       </div>
     );
@@ -120,10 +116,17 @@ export default function CommunityDashboardPage() {
 
   if (error) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <div className="bg-red-50 dark:bg-red-950 rounded-lg p-12 border border-red-200 dark:border-red-800">
-          <p className="text-xl text-red-900 dark:text-red-100 mb-4">{error}</p>
-          <p className="text-red-700 dark:text-red-300">Redirecting to communities...</p>
+      <div className="min-h-screen bg-yellow-50 flex items-center justify-center p-4">
+        <div className="bg-red-400 border-8 border-black p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] max-w-md w-full">
+          <div className="text-center">
+            <div className="w-20 h-20 bg-white border-4 border-black mx-auto mb-6 flex items-center justify-center">
+              <svg className="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-black text-black mb-4">{error}</h2>
+            <p className="text-lg font-bold text-black">Redirecting to communities...</p>
+          </div>
         </div>
       </div>
     );
@@ -134,46 +137,96 @@ export default function CommunityDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-      {/* Dashboard Header */}
-      <DashboardHeader
-        community={{
-          name: community.name,
-          tokenSymbol: community.tokenSymbol,
-        }}
-        stats={stats || {
-          totalMembers: 0,
-          totalProposals: 0,
-          totalEvents: 0,
-          treasuryBalance: 0,
-        }}
-        onBack={handleBack}
-        onRefresh={handleManualRefresh}
-        isRefreshing={statsLoading}
-      />
+    <div className="min-h-screen bg-yellow-50">
+      {/* Dashboard Header with Neo Brutalism styling */}
+      <div className="bg-black border-b-8 border-black">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+          <div className="flex items-center justify-between mb-6">
+            <button 
+              onClick={handleBack}
+              className="flex items-center gap-2 bg-cyan-400 text-black px-4 sm:px-6 py-3 font-black text-sm sm:text-base border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all active:shadow-none active:translate-x-[6px] active:translate-y-[6px]"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span className="hidden sm:inline">BACK</span>
+            </button>
+            <button 
+              onClick={handleManualRefresh}
+              disabled={statsLoading}
+              className="flex items-center gap-2 bg-pink-400 text-black px-4 sm:px-6 py-3 font-black text-sm sm:text-base border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all active:shadow-none active:translate-x-[6px] active:translate-y-[6px] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg className={`w-5 h-5 ${statsLoading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span className="hidden sm:inline">REFRESH</span>
+            </button>
+          </div>
 
-      {/* Tab Navigation */}
-      <TabNavigation
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
+          <div className="bg-white border-4 border-black p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <h1 className="text-3xl sm:text-5xl font-black text-black mb-2 break-words">{community.name}</h1>
+            <p className="text-xl sm:text-2xl font-black text-black">${community.tokenSymbol}</p>
+          </div>
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6">
+            <div className="bg-cyan-400 border-4 border-black p-3 sm:p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <div className="text-xs sm:text-sm font-black text-black mb-1">MEMBERS</div>
+              <div className="text-2xl sm:text-4xl font-black text-black">{stats?.totalMembers || 0}</div>
+            </div>
+            <div className="bg-yellow-400 border-4 border-black p-3 sm:p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <div className="text-xs sm:text-sm font-black text-black mb-1">PROPOSALS</div>
+              <div className="text-2xl sm:text-4xl font-black text-black">{stats?.totalProposals || 0}</div>
+            </div>
+            <div className="bg-pink-400 border-4 border-black p-3 sm:p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <div className="text-xs sm:text-sm font-black text-black mb-1">EVENTS</div>
+              <div className="text-2xl sm:text-4xl font-black text-black">{stats?.totalEvents || 0}</div>
+            </div>
+            <div className="bg-lime-400 border-4 border-black p-3 sm:p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <div className="text-xs sm:text-sm font-black text-black mb-1">TREASURY</div>
+              <div className="text-2xl sm:text-4xl font-black text-black">${((stats?.treasuryBalance || 0) / 1000).toFixed(0)}K</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab Navigation with Neo Brutalism */}
+      <div className="bg-white border-b-4 border-black sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex overflow-x-auto scrollbar-hide">
+            {['activity', 'members', 'leaderboard', 'events', 'chat'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => handleTabChange(tab as TabType)}
+                className={`px-4 sm:px-8 py-4 font-black text-sm sm:text-base whitespace-nowrap border-r-4 border-black transition-all ${
+                  activeTab === tab
+                    ? 'bg-yellow-400 text-black'
+                    : 'bg-white text-black hover:bg-gray-100'
+                }`}
+              >
+                {tab.toUpperCase()}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* Refresh Error Message */}
       {refreshError && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4">
-          <div className="bg-red-50 dark:bg-red-950 rounded-lg p-3 sm:p-4 border border-red-200 dark:border-red-800 flex items-center justify-between animate-slideDown">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-              <svg className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <div className="bg-red-400 border-4 border-black p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <svg className="w-6 h-6 text-black shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-sm sm:text-base text-red-900 dark:text-red-100 font-medium truncate">{refreshError}</p>
+              <p className="text-sm sm:text-base text-black font-bold truncate">{refreshError}</p>
             </div>
             <button
               onClick={() => setRefreshError(null)}
-              className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 shrink-0 ml-2"
+              className="text-black hover:bg-black hover:text-red-400 shrink-0 ml-2 p-1 border-2 border-black transition-all"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
@@ -187,7 +240,7 @@ export default function CommunityDashboardPage() {
           <div className="lg:col-span-2">
             <div 
               key={activeTab}
-              className="bg-white dark:bg-zinc-900 rounded-lg p-4 sm:p-6 lg:p-8 border border-zinc-200 dark:border-zinc-800 animate-fadeIn"
+              className="bg-white border-4 border-black p-4 sm:p-6 lg:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
             >
               {activeTab === 'activity' && (
                 <DashboardSectionErrorBoundary>
@@ -195,29 +248,29 @@ export default function CommunityDashboardPage() {
                 </DashboardSectionErrorBoundary>
               )}
           
-          {activeTab === 'members' && (
-            <DashboardSectionErrorBoundary>
-              <MembersDirectory communityId={communityId} />
-            </DashboardSectionErrorBoundary>
-          )}
+              {activeTab === 'members' && (
+                <DashboardSectionErrorBoundary>
+                  <MembersDirectory communityId={communityId} />
+                </DashboardSectionErrorBoundary>
+              )}
           
-          {activeTab === 'leaderboard' && (
-            <DashboardSectionErrorBoundary>
-              <Leaderboard communityId={communityId} />
-            </DashboardSectionErrorBoundary>
-          )}
+              {activeTab === 'leaderboard' && (
+                <DashboardSectionErrorBoundary>
+                  <Leaderboard communityId={communityId} />
+                </DashboardSectionErrorBoundary>
+              )}
           
-          {activeTab === 'events' && (
-            <DashboardSectionErrorBoundary>
-              <EventsSection communityId={communityId} />
-            </DashboardSectionErrorBoundary>
-          )}
+              {activeTab === 'events' && (
+                <DashboardSectionErrorBoundary>
+                  <EventsSection communityId={communityId} />
+                </DashboardSectionErrorBoundary>
+              )}
           
-          {activeTab === 'chat' && (
-            <DashboardSectionErrorBoundary>
-              <ChatSection communityId={communityId} />
-            </DashboardSectionErrorBoundary>
-          )}
+              {activeTab === 'chat' && (
+                <DashboardSectionErrorBoundary>
+                  <ChatSection communityId={communityId} />
+                </DashboardSectionErrorBoundary>
+              )}
             </div>
           </div>
 
@@ -225,31 +278,33 @@ export default function CommunityDashboardPage() {
           <div className="lg:col-span-1 space-y-6">
             {/* Membership NFT Card */}
             <DashboardSectionErrorBoundary>
-              <MembershipNFTCard communityId={communityId} />
+              <div className="bg-cyan-400 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                <MembershipNFTCard communityId={communityId} />
+              </div>
             </DashboardSectionErrorBoundary>
 
             {/* Member Stats Card */}
             {userMembership && (
-              <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 border border-zinc-200 dark:border-zinc-800">
-                <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50 mb-4">
-                  Your Stats
+              <div className="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                <h3 className="text-xl sm:text-2xl font-black text-black mb-6 pb-3 border-b-4 border-black">
+                  YOUR STATS
                 </h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-zinc-600 dark:text-zinc-400">Reputation</span>
-                    <span className="font-semibold text-zinc-900 dark:text-zinc-50">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-3 bg-yellow-50 border-2 border-black">
+                    <span className="font-bold text-black">REPUTATION</span>
+                    <span className="font-black text-2xl text-black">
                       {userMembership.reputation || 0}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-zinc-600 dark:text-zinc-400">Events Attended</span>
-                    <span className="font-semibold text-zinc-900 dark:text-zinc-50">
+                  <div className="flex justify-between items-center p-3 bg-pink-50 border-2 border-black">
+                    <span className="font-bold text-black">EVENTS ATTENDED</span>
+                    <span className="font-black text-2xl text-black">
                       {(userMembership as any).totalEventsAttended || 0}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-zinc-600 dark:text-zinc-400">Connections</span>
-                    <span className="font-semibold text-zinc-900 dark:text-zinc-50">
+                  <div className="flex justify-between items-center p-3 bg-lime-50 border-2 border-black">
+                    <span className="font-bold text-black">CONNECTIONS</span>
+                    <span className="font-black text-2xl text-black">
                       {(userMembership as any).totalConnections || 0}
                     </span>
                   </div>
@@ -259,6 +314,16 @@ export default function CommunityDashboardPage() {
           </div>
         </div>
       </div>
+
+      <style jsx global>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 }

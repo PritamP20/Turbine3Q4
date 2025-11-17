@@ -14,29 +14,88 @@ export default function MembersDirectory({ communityId }: MembersDirectoryProps)
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<'joinDate' | 'reputation'>('reputation');
   const [page, setPage] = useState(1);
+  const [imageCache, setImageCache] = useState<Record<string, string>>({});
   const ITEMS_PER_PAGE = 12;
 
-  // Enhance members data with NFT images from localStorage
+  // Load images from localStorage and API
+  useEffect(() => {
+    if (!membersData) return;
+
+    console.log('Loading images for', membersData.length, 'members');
+
+    const loadImages = async () => {
+      const newCache: Record<string, string> = {};
+
+      for (const member of membersData) {
+        const cacheKey = `${communityId}-${member.wallet}`;
+        const storageKey = `nft-image-${cacheKey}`;
+        
+        console.log('Checking member:', member.name, 'wallet:', member.wallet);
+        console.log('Metadata URI:', member.metadataUri);
+        
+        // Skip if already cached
+        if (imageCache[cacheKey]) {
+          console.log('Image already in cache for', member.name);
+          newCache[cacheKey] = imageCache[cacheKey];
+          continue;
+        }
+
+        // Try localStorage first
+        const storedImage = localStorage.getItem(storageKey);
+        if (storedImage) {
+          console.log('Found image in localStorage for', member.name);
+          newCache[cacheKey] = storedImage;
+          continue;
+        }
+
+        // Check if member has custom image based on metadata URI
+        const hasCustomImage = member.metadataUri?.includes('/custom');
+        console.log('Has custom image:', hasCustomImage);
+        
+        if (hasCustomImage) {
+          // Fetch from API
+          try {
+            console.log('Fetching from API:', `/api/nft-images/${communityId}/${member.wallet}`);
+            const response = await fetch(`/api/nft-images/${communityId}/${member.wallet}`);
+            if (response.ok) {
+              const data = await response.json();
+              if (data.image) {
+                console.log('Got image from API for', member.name);
+                newCache[cacheKey] = data.image;
+                localStorage.setItem(storageKey, data.image);
+              }
+            } else {
+              console.log('API response not ok:', response.status);
+            }
+          } catch (error) {
+            console.error('Failed to fetch NFT image:', error);
+          }
+        }
+      }
+
+      console.log('Loaded', Object.keys(newCache).length, 'images');
+      if (Object.keys(newCache).length > 0) {
+        setImageCache(prev => ({ ...prev, ...newCache }));
+      }
+    };
+
+    loadImages();
+  }, [membersData, communityId]);
+
+  // Enhance members data with NFT images
   const members: Member[] = useMemo(() => {
     if (!membersData) return [];
     
     return membersData.map((member) => {
-      let nftImage: string | undefined;
-      if (typeof window !== 'undefined') {
-        const storedImage = localStorage.getItem(
-          `nft-image-${communityId}-${member.wallet}`
-        );
-        if (storedImage) {
-          nftImage = storedImage;
-        }
-      }
+      const cacheKey = `${communityId}-${member.wallet}`;
+      const nftImage = imageCache[cacheKey];
 
       return {
         ...member,
         nftImage,
       };
     });
-  }, [membersData, communityId]);
+  }, [membersData, communityId, imageCache]);
 
   // Filter and sort members
   const filteredAndSortedMembers = useMemo(() => {

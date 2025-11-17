@@ -82,4 +82,4 @@ export interface CommunityDashboardData {
   stats: CommunityStats;
 }
 
-export type TabType = 'activity' | 'members' | 'leaderboard' | 'events' | 'chat';
+export type TabType = 'activity' | 'members' | 'leaderboard' | 'events' | 'governance' | 'chat';

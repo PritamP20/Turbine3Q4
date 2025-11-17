@@ -30,18 +30,15 @@ export default function ChatSection({ communityId }: ChatSectionProps) {
   const [hasNewMessages, setHasNewMessages] = useState(false);
   const previousMessageCountRef = useRef(0);
 
-  // Fetch member name on mount
   useEffect(() => {
     if (wallet && publicKey) {
       fetchMemberName();
     }
   }, [wallet, publicKey, communityId]);
 
-  // Fetch messages on mount and set up polling
   useEffect(() => {
     fetchMessages();
     
-    // Poll for new messages every 5 seconds
     const interval = setInterval(() => {
       fetchMessages();
     }, 5000);
@@ -49,21 +46,18 @@ export default function ChatSection({ communityId }: ChatSectionProps) {
     return () => clearInterval(interval);
   }, [communityId]);
 
-  // Auto-scroll to bottom when new messages arrive (if user is near bottom)
   useEffect(() => {
     if (shouldAutoScroll && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, shouldAutoScroll]);
 
-  // Track if user is scrolled near bottom
   const handleScroll = () => {
     if (messagesContainerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
       const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
       setShouldAutoScroll(isNearBottom);
       
-      // Clear new messages indicator when user scrolls to bottom
       if (isNearBottom && hasNewMessages) {
         setHasNewMessages(false);
       }
@@ -110,9 +104,7 @@ export default function ChatSection({ communityId }: ChatSectionProps) {
       const data = await response.json();
       const newMessages = data.messages || [];
       
-      // Check if there are new messages
       if (previousMessageCountRef.current > 0 && newMessages.length > previousMessageCountRef.current) {
-        // Only show indicator if user is not at bottom
         if (!shouldAutoScroll) {
           setHasNewMessages(true);
         }
@@ -132,7 +124,6 @@ export default function ChatSection({ communityId }: ChatSectionProps) {
   const sendMessage = async () => {
     if (!messageInput.trim() || !signMessage || !publicKey) return;
 
-    // Validate message length
     if (messageInput.length > 500) {
       setSendError("Message exceeds 500 character limit");
       setTimeout(() => setSendError(""), 3000);
@@ -142,7 +133,6 @@ export default function ChatSection({ communityId }: ChatSectionProps) {
     setSending(true);
     setSendError("");
 
-    // Create optimistic message
     const optimisticMessage: ChatMessage = {
       id: `temp-${Date.now()}`,
       sender: publicKey.toString(),
@@ -151,24 +141,19 @@ export default function ChatSection({ communityId }: ChatSectionProps) {
       timestamp: Date.now(),
     };
 
-    // Store current input and clear it immediately for better UX
     const messageToSend = messageInput;
     setMessageInput("");
     
-    // Optimistically add message to UI
     setMessages(prev => [...prev, optimisticMessage]);
     setShouldAutoScroll(true);
 
     try {
-      // Sign the message with wallet
       const messageBytes = new TextEncoder().encode(messageToSend);
       const signature = await signMessage(messageBytes);
       
-      // Convert signature to base58
       const bs58 = await import("bs58");
       const signatureBase58 = bs58.default.encode(signature);
 
-      // Send message to API
       const response = await fetch(`/api/communities/${communityId}/messages`, {
         method: "POST",
         headers: {
@@ -187,25 +172,16 @@ export default function ChatSection({ communityId }: ChatSectionProps) {
         throw new Error(errorData.error || "Failed to send message");
       }
 
-      // Fetch fresh messages to replace optimistic update with real data
       await fetchMessages();
     } catch (err: any) {
-      // Log error for debugging
       const parsedError = logTransactionError('Send Message', err, {
         communityId,
         messageLength: messageToSend.length,
       });
       
-      // Revert optimistic update on error
       setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
-      
-      // Restore the message input so user can retry
       setMessageInput(messageToSend);
-      
-      // Show user-friendly error message
       setSendError(parsedError.userFriendlyMessage);
-      
-      // Auto-dismiss error after 5 seconds
       setTimeout(() => setSendError(""), 5000);
     } finally {
       setSending(false);
@@ -238,44 +214,35 @@ export default function ChatSection({ communityId }: ChatSectionProps) {
 
   return (
     <div className="flex flex-col h-[500px] sm:h-[600px]">
-      <div className="mb-3 sm:mb-4">
-        <h2 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100">Community Chat</h2>
-        <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+      <div className="mb-4 pb-4 border-b-4 border-black">
+        <h2 className="text-2xl sm:text-3xl font-black text-black">COMMUNITY CHAT</h2>
+        <p className="text-sm sm:text-base font-bold text-black mt-1">
           Chat with other community members
         </p>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg">
-          <p className="text-sm text-red-900 dark:text-red-100">{error}</p>
+        <div className="mb-4 p-4 bg-red-400 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-sm font-bold text-black">{error}</p>
         </div>
       )}
 
       {/* Messages List */}
-      <div className="relative flex-1 mb-3 sm:mb-4">
+      <div className="relative flex-1 mb-4">
         <div 
           ref={messagesContainerRef}
           onScroll={handleScroll}
-          className="h-full overflow-y-auto space-y-3 sm:space-y-4 p-3 sm:p-4 bg-zinc-50 dark:bg-zinc-950 rounded-lg border border-zinc-200 dark:border-zinc-800"
+          className="h-full overflow-y-auto space-y-3 sm:space-y-4 p-4 bg-white border-4 border-black"
         >
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
-              <svg
-                className="mx-auto h-12 w-12 text-zinc-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                />
-              </svg>
-              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                No messages yet. Be the first to say hello!
+              <div className="w-20 h-20 bg-cyan-400 border-4 border-black mx-auto mb-4 flex items-center justify-center text-4xl">
+                💬
+              </div>
+              <p className="text-lg font-black text-black">NO MESSAGES YET</p>
+              <p className="text-sm font-bold text-black mt-2">
+                Be the first to say hello!
               </p>
             </div>
           </div>
@@ -290,33 +257,21 @@ export default function ChatSection({ communityId }: ChatSectionProps) {
                   className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[85%] sm:max-w-[70%] rounded-lg p-2 sm:p-3 ${
+                    className={`max-w-[85%] sm:max-w-[70%] p-3 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
                       isOwnMessage
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700'
+                        ? 'bg-cyan-400'
+                        : 'bg-yellow-50'
                     }`}
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2 mb-1">
-                      <span
-                        className={`text-xs sm:text-sm font-medium ${
-                          isOwnMessage ? 'text-blue-100' : 'text-zinc-900 dark:text-zinc-100'
-                        }`}
-                      >
+                    <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2 mb-2">
+                      <span className="text-sm font-black text-black">
                         {msg.senderName || truncateWallet(msg.sender)}
                       </span>
-                      <span
-                        className={`text-xs ${
-                          isOwnMessage ? 'text-blue-200' : 'text-zinc-500 dark:text-zinc-400'
-                        }`}
-                      >
+                      <span className="text-xs font-bold text-black opacity-70">
                         {formatTimestamp(msg.timestamp)}
                       </span>
                     </div>
-                    <p
-                      className={`text-xs sm:text-sm wrap-break-word ${
-                        isOwnMessage ? 'text-white' : 'text-zinc-700 dark:text-zinc-300'
-                      }`}
-                    >
+                    <p className="text-sm font-bold text-black break-words">
                       {msg.message}
                     </p>
                   </div>
@@ -332,60 +287,60 @@ export default function ChatSection({ communityId }: ChatSectionProps) {
         {hasNewMessages && (
           <button
             onClick={scrollToBottom}
-            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-medium rounded-full shadow-lg transition-all flex items-center gap-2 animate-bounce active:scale-95 hover:shadow-xl"
+            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-pink-400 text-black text-sm font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all flex items-center gap-2"
           >
             <svg
-              className="w-3 sm:w-4 h-3 sm:h-4"
+              className="w-4 h-4"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              strokeWidth={3}
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
                 d="M19 14l-7 7m0 0l-7-7m7 7V3"
               />
             </svg>
-            New messages
+            NEW MESSAGES
           </button>
         )}
       </div>
 
       {/* Message Input */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         {sendError && (
-          <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg flex items-start justify-between gap-2">
+          <div className="p-3 bg-red-400 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-start justify-between gap-2">
             <div className="flex items-start gap-2 flex-1">
-              <svg className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg className="w-5 h-5 text-black shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-sm text-red-900 dark:text-red-100">{sendError}</p>
+              <p className="text-sm font-bold text-black">{sendError}</p>
             </div>
             <button
               onClick={() => setSendError("")}
-              className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 shrink-0"
+              className="text-black hover:bg-black hover:text-red-400 p-1 border-2 border-black shrink-0"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
         )}
         
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <div className="flex-1 relative">
             <textarea
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+              placeholder="TYPE YOUR MESSAGE..."
               disabled={sending || !publicKey}
               rows={2}
               maxLength={500}
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+              className="w-full px-4 py-3 text-sm sm:text-base border-4 border-black bg-white text-black placeholder-gray-400 font-bold focus:outline-none focus:border-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed resize-none"
             />
-            <div className="absolute bottom-2 right-2 text-xs text-zinc-500 dark:text-zinc-400">
+            <div className="absolute bottom-2 right-2 text-xs font-black text-black bg-yellow-200 border-2 border-black px-2 py-1">
               {messageInput.length}/500
             </div>
           </div>
@@ -393,12 +348,12 @@ export default function ChatSection({ communityId }: ChatSectionProps) {
           <button
             onClick={sendMessage}
             disabled={sending || !messageInput.trim() || !publicKey}
-            className="px-3 sm:px-6 py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-zinc-400 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-all duration-200 flex items-center gap-2 shrink-0 transform active:scale-95 hover:shadow-md"
+            className="px-4 sm:px-6 py-3 bg-lime-400 hover:bg-lime-500 disabled:bg-gray-300 disabled:cursor-not-allowed text-black font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all flex items-center gap-2 shrink-0 disabled:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] disabled:hover:translate-x-0 disabled:hover:translate-y-0"
           >
             {sending ? (
               <>
-                <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                <span className="hidden sm:inline">Sending...</span>
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-4 border-black border-t-transparent"></div>
+                <span className="hidden sm:inline">SENDING...</span>
               </>
             ) : (
               <>
@@ -407,24 +362,26 @@ export default function ChatSection({ communityId }: ChatSectionProps) {
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
+                  strokeWidth={3}
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
                     d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
                   />
                 </svg>
-                <span className="hidden sm:inline">Send</span>
+                <span className="hidden sm:inline">SEND</span>
               </>
             )}
           </button>
         </div>
 
         {!publicKey && (
-          <p className="text-sm text-zinc-600 dark:text-zinc-400 text-center">
-            Connect your wallet to send messages
-          </p>
+          <div className="text-center p-3 bg-yellow-100 border-4 border-black">
+            <p className="text-sm font-black text-black">
+              CONNECT YOUR WALLET TO SEND MESSAGES
+            </p>
+          </div>
         )}
       </div>
     </div>

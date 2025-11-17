@@ -392,20 +392,48 @@ function CommunityCard({ community }: { community: Community }) {
         METADATA_PROGRAM_ID
       );
 
-      const metadataUri = imageFile 
-        ? `https://nft.storage/${communityPda.toString()}/${wallet.publicKey.toString()}`
-        : `https://nft.storage/${communityPda.toString()}/${wallet.publicKey.toString()}/default`;
+      // Handle image upload
+      let hasCustomImage = false;
       
       if (imageFile) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          localStorage.setItem(
-            `nft-image-${communityPda.toString()}-${wallet.publicKey.toString()}`,
-            reader.result as string
-          );
-        };
-        reader.readAsDataURL(imageFile);
+        console.log('Processing image file:', imageFile.name, imageFile.size);
+        
+        // Read image as data URL
+        const imageDataUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(imageFile);
+        });
+        
+        console.log('Image converted to data URL, length:', imageDataUrl.length);
+        
+        // Store in localStorage for immediate access
+        const storageKey = `nft-image-${communityPda.toString()}-${wallet.publicKey.toString()}`;
+        localStorage.setItem(storageKey, imageDataUrl);
+        console.log('Image stored in localStorage with key:', storageKey);
+        
+        // Upload to API for persistence and sharing
+        try {
+          const response = await fetch(`/api/nft-images/${communityPda.toString()}/${wallet.publicKey.toString()}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: imageDataUrl }),
+          });
+          
+          if (response.ok) {
+            hasCustomImage = true;
+            console.log('Image uploaded to API successfully');
+          } else {
+            console.error('API upload failed with status:', response.status);
+          }
+        } catch (error) {
+          console.error('Failed to upload image to API:', error);
+        }
       }
+      
+      // Use a compact metadata URI that fits in Solana's limits
+      const metadataUri = `https://nft.storage/${communityPda.toString()}/${wallet.publicKey.toString()}/${hasCustomImage ? 'custom' : 'default'}`;
+      console.log('Metadata URI:', metadataUri);
       
       const tx = await program.methods
         .registerMember(memberName, metadataUri)

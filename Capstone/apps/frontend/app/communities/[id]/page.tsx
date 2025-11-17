@@ -10,6 +10,7 @@ import ActivityFeed from "@/components/dashboard/ActivityFeed";
 import MembersDirectory from "@/components/dashboard/MembersDirectory";
 import Leaderboard from "@/components/dashboard/Leaderboard";
 import EventsSection from "@/components/dashboard/EventsSection";
+import GovernanceSection from "@/components/dashboard/GovernanceSection";
 import ChatSection from "@/components/dashboard/ChatSection";
 import { MembershipNFTCard } from "@/components/MembershipNFT";
 import { DashboardSectionErrorBoundary } from "@/components/ErrorBoundary";
@@ -38,7 +39,7 @@ export default function CommunityDashboardPage() {
       const searchParams = new URLSearchParams(window.location.search);
       const tabParam = searchParams.get('tab') as TabType | null;
       
-      const validTabs: TabType[] = ['activity', 'members', 'leaderboard', 'events', 'chat'];
+      const validTabs: TabType[] = ['activity', 'members', 'leaderboard', 'events', 'governance', 'chat'];
       if (tabParam && validTabs.includes(tabParam)) {
         setActiveTab(tabParam);
       }
@@ -194,7 +195,7 @@ export default function CommunityDashboardPage() {
       <div className="bg-white border-b-4 border-black sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex overflow-x-auto scrollbar-hide">
-            {['activity', 'members', 'leaderboard', 'events', 'chat'].map((tab) => (
+            {['activity', 'members', 'leaderboard', 'events', 'governance', 'chat'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => handleTabChange(tab as TabType)}
@@ -263,6 +264,12 @@ export default function CommunityDashboardPage() {
               {activeTab === 'events' && (
                 <DashboardSectionErrorBoundary>
                   <EventsSection communityId={communityId} />
+                </DashboardSectionErrorBoundary>
+              )}
+          
+              {activeTab === 'governance' && (
+                <DashboardSectionErrorBoundary>
+                  <GovernanceSection communityId={communityId} />
                 </DashboardSectionErrorBoundary>
               )}
           

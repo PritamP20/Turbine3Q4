@@ -15,6 +15,8 @@ export interface Member {
   joinedAt: number;
   reputation: number;
   activityCount: number;
+  membershipNft?: string;
+  nftImage?: string;
 }
 
 export interface Activity {

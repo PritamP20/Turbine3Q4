@@ -103,7 +103,7 @@ export default function DashboardHeader({ community, stats, onBack, onRefresh, i
           <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-3 sm:p-4 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all duration-200 hover:shadow-md transform hover:-translate-y-1">
             <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mb-1">Treasury</p>
             <p className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50 truncate">
-              {stats.treasuryBalance.toFixed(2)} SOL
+              {stats.treasuryBalance.toLocaleString()} {community.tokenSymbol}
             </p>
           </div>
         </div>

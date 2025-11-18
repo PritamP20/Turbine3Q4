@@ -304,19 +304,33 @@ export function useCommunityStats(communityId: string) {
         },
       ]);
 
-      // Fetch treasury balance
+      // Fetch treasury token balance
       const [treasuryPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("treasury"), communityPda.toBuffer()],
         program.programId
       );
 
-      const treasuryBalance = await connection.getBalance(treasuryPda);
+      let treasuryBalance = 0;
+      try {
+        const tokenMint = new PublicKey(communityAccount.tokenMint);
+        const { getAssociatedTokenAddress } = await import('@solana/spl-token');
+        const treasuryTokenAccount = await getAssociatedTokenAddress(
+          tokenMint,
+          treasuryPda,
+          true
+        );
+        const balance = await connection.getTokenAccountBalance(treasuryTokenAccount);
+        treasuryBalance = parseFloat(balance.value.uiAmount?.toString() || '0');
+      } catch (err) {
+        console.log('Treasury token account not found or empty');
+        treasuryBalance = 0;
+      }
 
       return {
         totalMembers: communityAccount.memberCount,
         totalProposals: proposals.length,
         totalEvents: events.length,
-        treasuryBalance: treasuryBalance / 1e9,
+        treasuryBalance: treasuryBalance,
       };
     },
     enabled: !!wallet && !!communityId,

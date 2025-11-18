@@ -185,7 +185,7 @@ export default function CommunityDashboardPage() {
             </div>
             <div className="bg-lime-400 border-4 border-black p-3 sm:p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <div className="text-xs sm:text-sm font-black text-black mb-1">TREASURY</div>
-              <div className="text-2xl sm:text-4xl font-black text-black">${((stats?.treasuryBalance || 0) / 1000).toFixed(0)}K</div>
+              <div className="text-2xl sm:text-4xl font-black text-black">{(stats?.treasuryBalance || 0).toLocaleString()}</div>
             </div>
           </div>
         </div>

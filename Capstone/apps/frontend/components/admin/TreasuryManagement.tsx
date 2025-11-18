@@ -1,7 +1,12 @@
 // TreasuryManagement.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { AnchorProvider } from '@coral-xyz/anchor';
+import { PublicKey } from '@solana/web3.js';
+import { getAssociatedTokenAddress } from '@solana/spl-token';
+import { getProgram, getConnection } from '@/lib/anchor-setup';
 
 interface Transaction {
   id: string;
@@ -17,12 +22,56 @@ interface TreasuryManagementProps {
 }
 
 export function TreasuryManagement({ communityId }: TreasuryManagementProps) {
+  const wallet = useWallet();
   const [treasuryBalance, setTreasuryBalance] = useState(0);
+  const [tokenSymbol, setTokenSymbol] = useState('TOKENS');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [showWithdrawForm, setShowWithdrawForm] = useState(false);
   const [showDepositForm, setShowDepositForm] = useState(false);
   const [amount, setAmount] = useState('');
   const [recipient, setRecipient] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (wallet.connected) {
+      fetchTreasuryBalance();
+    }
+  }, [wallet.connected, communityId]);
+
+  const fetchTreasuryBalance = async () => {
+    try {
+      const connection = getConnection();
+      const provider = new AnchorProvider(connection, wallet as any, {});
+      const program: any = getProgram(provider);
+
+      const communityPda = new PublicKey(communityId);
+      const community = await program.account.community.fetch(communityPda);
+      const tokenMint = new PublicKey(community.tokenMint);
+
+      setTokenSymbol(community.tokenSymbol);
+
+      const [treasuryPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from('treasury'), communityPda.toBuffer()],
+        program.programId
+      );
+
+      const treasuryTokenAccount = await getAssociatedTokenAddress(
+        tokenMint,
+        treasuryPda,
+        true
+      );
+
+      try {
+        const balance = await connection.getTokenAccountBalance(treasuryTokenAccount);
+        setTreasuryBalance(parseFloat(balance.value.uiAmount?.toString() || '0'));
+      } catch (err) {
+        console.log('Treasury token account not found or empty');
+        setTreasuryBalance(0);
+      }
+    } catch (error) {
+      console.error('Error fetching treasury balance:', error);
+    }
+  };
 
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,14 +97,14 @@ export function TreasuryManagement({ communityId }: TreasuryManagementProps) {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <p className="text-sm font-black text-black mb-1">TOTAL TREASURY BALANCE</p>
-            <p className="text-5xl font-black text-black">{treasuryBalance.toLocaleString()} SOL</p>
+            <p className="text-5xl font-black text-black">{treasuryBalance.toLocaleString()} {tokenSymbol}</p>
           </div>
           <div className="flex gap-3">
             <button
-              onClick={() => setShowDepositForm(true)}
-              className="bg-cyan-400 text-black px-6 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all whitespace-nowrap"
+              onClick={fetchTreasuryBalance}
+              className="bg-yellow-400 text-black px-6 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all whitespace-nowrap"
             >
-              + DEPOSIT
+              🔄 REFRESH
             </button>
             <button
               onClick={() => setShowWithdrawForm(true)}
@@ -75,7 +124,7 @@ export function TreasuryManagement({ communityId }: TreasuryManagementProps) {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-black text-black mb-2 uppercase">
-                Amount (SOL) *
+                Amount ({tokenSymbol}) *
               </label>
               <input
                 type="number"
@@ -121,43 +170,9 @@ export function TreasuryManagement({ communityId }: TreasuryManagementProps) {
         </form>
       )}
 
-      {/* Deposit Form */}
-      {showDepositForm && (
-        <form onSubmit={handleDeposit} className="bg-cyan-50 border-4 border-black p-6 mb-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-          <h3 className="text-2xl font-black text-black mb-6 pb-3 border-b-4 border-black">DEPOSIT TO TREASURY</h3>
-          
-          <div>
-            <label className="block text-sm font-black text-black mb-2 uppercase">
-              Amount (SOL) *
-            </label>
-            <input
-              type="number"
-              step="0.000000001"
-              required
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold focus:outline-none focus:border-cyan-400"
-              placeholder="0.0"
-            />
-          </div>
+      {/* Note: Deposit removed - use TOKENS tab to mint tokens */}
 
-          <div className="flex gap-3 mt-6">
-            <button
-              type="submit"
-              className="bg-cyan-400 text-black px-8 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
-            >
-              DEPOSIT
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowDepositForm(false)}
-              className="bg-gray-200 text-black px-8 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
-            >
-              CANCEL
-            </button>
-          </div>
-        </form>
-      )}
+
 
       {/* Transaction History */}
       <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
@@ -189,10 +204,10 @@ export function TreasuryManagement({ communityId }: TreasuryManagementProps) {
                   <p className={`font-black text-xl ${
                     tx.type === 'deposit' ? 'text-lime-600' : 'text-red-600'
                   }`}>
-                    {tx.type === 'deposit' ? '+' : '-'}{tx.amount} SOL
+                    {tx.type === 'deposit' ? '+' : '-'}{tx.amount} {tokenSymbol}
                   </p>
                   <a
-                    href={`https://explorer.solana.com/tx/${tx.txHash}`}
+                    href={`https://explorer.solana.com/tx/${tx.txHash}?cluster=devnet`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-cyan-600 text-sm font-bold hover:underline"

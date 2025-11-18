@@ -269,17 +269,15 @@ export default function EventsSection({ communityId }: EventsSectionProps) {
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-950 rounded-lg p-6 border border-red-200 dark:border-red-800">
+      <div className="bg-red-400 border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+            <span className="text-2xl">⚠️</span>
             <div>
-              <p className="text-red-900 dark:text-red-100 font-semibold">{error}</p>
+              <p className="text-black font-bold">{error}</p>
               {retryCount > 0 && retryCount < MAX_RETRIES && (
-                <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-                  Retrying... (Attempt {retryCount + 1} of {MAX_RETRIES})
+                <p className="text-sm text-black font-bold mt-1">
+                  RETRYING... (ATTEMPT {retryCount + 1} OF {MAX_RETRIES})
                 </p>
               )}
             </div>
@@ -289,9 +287,9 @@ export default function EventsSection({ communityId }: EventsSectionProps) {
               setRetryCount(0);
               fetchEvents();
             }}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+            className="px-4 py-2 bg-black text-red-400 font-black border-2 border-black hover:bg-white hover:text-black transition-all"
           >
-            Retry Now
+            RETRY
           </button>
         </div>
       </div>
@@ -301,26 +299,26 @@ export default function EventsSection({ communityId }: EventsSectionProps) {
   return (
     <div>
       {/* Tab Navigation */}
-      <div className="flex space-x-4 mb-4 sm:mb-6 border-b border-zinc-200 dark:border-zinc-700">
+      <div className="flex gap-3 mb-6">
         <button
           onClick={() => setActiveTab("upcoming")}
-          className={`pb-2 sm:pb-3 px-1 text-sm sm:text-base font-medium transition-colors ${
+          className={`px-6 py-3 font-black border-4 border-black transition-all ${
             activeTab === "upcoming"
-              ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400"
-              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+              ? "bg-yellow-400 text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+              : "bg-white text-black hover:bg-gray-100"
           }`}
         >
-          Upcoming ({upcomingEvents.length})
+          UPCOMING ({upcomingEvents.length})
         </button>
         <button
           onClick={() => setActiveTab("past")}
-          className={`pb-2 sm:pb-3 px-1 text-sm sm:text-base font-medium transition-colors ${
+          className={`px-6 py-3 font-black border-4 border-black transition-all ${
             activeTab === "past"
-              ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400"
-              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+              ? "bg-yellow-400 text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+              : "bg-white text-black hover:bg-gray-100"
           }`}
         >
-          Past ({pastEvents.length})
+          PAST ({pastEvents.length})
         </button>
       </div>
 
@@ -328,11 +326,12 @@ export default function EventsSection({ communityId }: EventsSectionProps) {
       {activeTab === "upcoming" && (
         <div>
           {upcomingEvents.length === 0 ? (
-            <div className="text-center py-8 sm:py-12">
-              <svg className="mx-auto h-10 sm:h-12 w-10 sm:w-12 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <p className="mt-3 sm:mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400">No upcoming events</p>
+            <div className="bg-white border-4 border-black p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center">
+              <div className="w-20 h-20 bg-yellow-400 border-4 border-black mx-auto mb-6 flex items-center justify-center text-4xl">
+                📅
+              </div>
+              <h3 className="text-2xl font-black text-black mb-2">NO UPCOMING EVENTS</h3>
+              <p className="text-lg font-bold text-black">Check back later!</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
@@ -352,11 +351,12 @@ export default function EventsSection({ communityId }: EventsSectionProps) {
       {activeTab === "past" && (
         <div>
           {pastEvents.length === 0 ? (
-            <div className="text-center py-8 sm:py-12">
-              <svg className="mx-auto h-10 sm:h-12 w-10 sm:w-12 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <p className="mt-3 sm:mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400">No past events</p>
+            <div className="bg-white border-4 border-black p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center">
+              <div className="w-20 h-20 bg-gray-300 border-4 border-black mx-auto mb-6 flex items-center justify-center text-4xl">
+                📅
+              </div>
+              <h3 className="text-2xl font-black text-black mb-2">NO PAST EVENTS</h3>
+              <p className="text-lg font-bold text-black">History will appear here!</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">

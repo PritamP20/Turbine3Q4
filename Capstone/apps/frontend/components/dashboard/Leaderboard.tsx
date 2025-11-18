@@ -41,7 +41,6 @@ export default function Leaderboard({ communityId }: LeaderboardProps) {
     }
   }, [wallet, communityId]);
 
-  // Auto-refresh leaderboard every 30 seconds to catch reputation changes
   useEffect(() => {
     if (!wallet || !communityId) return;
 
@@ -64,26 +63,21 @@ export default function Leaderboard({ communityId }: LeaderboardProps) {
 
       const communityPubkey = new PublicKey(communityId);
 
-      // Fetch all member accounts for this community
       const memberAccounts = await (program.account as any).member.all([
         {
           memcmp: {
-            offset: 8, // After discriminator
+            offset: 8,
             bytes: communityPubkey.toBase58(),
           },
         },
       ]);
 
       const membersData: Member[] = memberAccounts.map((account: any) => {
-        console.log("Member account data:", account.account);
-        
-        // Handle reputation score - convert BN to number
         const reputationScore = account.account.reputationScore || account.account.reputation_score || 0;
         const reputation = typeof reputationScore === 'object' && reputationScore.toNumber 
           ? reputationScore.toNumber() 
           : Number(reputationScore);
 
-        // Handle joinedAt - convert BN to number
         const joinedAtValue = account.account.joinedAt;
         const joinedAt = typeof joinedAtValue === 'object' && joinedAtValue.toNumber
           ? joinedAtValue.toNumber()
@@ -96,19 +90,14 @@ export default function Leaderboard({ communityId }: LeaderboardProps) {
           metadataUri: account.account.metadataUri || account.account.metadata_uri,
           joinedAt,
           reputation,
-          activityCount: 0, // Will be calculated from activities in later tasks
+          activityCount: 0,
         };
       });
 
       setMembers(membersData);
-      setRetryCount(0); // Reset retry count on success
+      setRetryCount(0);
     } catch (err: any) {
       console.error("Error fetching members:", err);
-      console.error("Error details:", {
-        message: err.message,
-        code: err.code,
-        logs: err.logs,
-      });
       
       let errorMessage = "Failed to load leaderboard. ";
       if (err.message?.includes("Account does not exist")) {
@@ -121,12 +110,11 @@ export default function Leaderboard({ communityId }: LeaderboardProps) {
       
       setError(errorMessage);
       
-      // Retry logic
       if (retryCount < MAX_RETRIES && !err.message?.includes("Invalid public key")) {
         setTimeout(() => {
           setRetryCount(prev => prev + 1);
           fetchMembers();
-        }, 3000); // Retry after 3 seconds
+        }, 3000);
       }
     } finally {
       setLoading(false);
@@ -166,11 +154,9 @@ export default function Leaderboard({ communityId }: LeaderboardProps) {
     setClaimSuccess(null);
     setClaimError(null);
 
-    // Store original state for potential rollback
     const originalAlreadyClaimed = alreadyClaimed;
     const originalTreasuryBalance = treasuryBalance;
 
-    // Optimistically update UI
     setAlreadyClaimed(true);
     if (treasuryBalance !== null) {
       setTreasuryBalance(treasuryBalance - amount);
@@ -181,13 +167,11 @@ export default function Leaderboard({ communityId }: LeaderboardProps) {
         const connection = getConnection();
         const provider = new AnchorProvider(connection, wallet, {});
         
-        // Check treasury balance first
         const { sufficient, balance } = await checkTreasuryBalance(provider, communityId, amount);
         if (!sufficient) {
           throw new Error(`InsufficientBalance: Treasury has ${balance} tokens, need ${amount}`);
         }
 
-        // Execute claim
         const result = await claimReward(provider, communityId, rank, amount);
         
         if (!result.success) {
@@ -195,57 +179,45 @@ export default function Leaderboard({ communityId }: LeaderboardProps) {
         }
         
         return result;
-      }, 2); // Retry up to 2 times
+      }, 2);
 
       setClaimSuccess(`Successfully claimed ${amount} tokens!`);
       
-      // Refresh data to get accurate state from blockchain
       await fetchMembers();
       await checkTreasury();
       
-      // Clear success message after 5 seconds
       setTimeout(() => setClaimSuccess(null), 5000);
     } catch (err: any) {
-      // Log error for debugging
       const parsedError = logTransactionError('Claim Reward', err, {
         rank,
         amount,
         communityId,
       });
       
-      // Revert optimistic update on error
       setAlreadyClaimed(originalAlreadyClaimed);
       setTreasuryBalance(originalTreasuryBalance);
       
-      // Show user-friendly error message
       setClaimError(parsedError.userFriendlyMessage);
       
-      // Auto-dismiss error after 8 seconds
       setTimeout(() => setClaimError(null), 8000);
     } finally {
       setClaimingReward(false);
     }
   };
 
-  // Calculate leaderboard with ranking logic
   const leaderboard = useMemo(() => {
-    // Sort members by reputation (descending), then by activity count (descending), then by join date (ascending)
     const sorted = [...members].sort((a, b) => {
-      // Primary: Reputation score (descending)
       if (b.reputation !== a.reputation) {
         return b.reputation - a.reputation;
       }
       
-      // Secondary: Activity count (descending)
       if (b.activityCount !== a.activityCount) {
         return b.activityCount - a.activityCount;
       }
       
-      // Tertiary: Join date (ascending - earlier is better)
       return a.joinedAt - b.joinedAt;
     });
 
-    // Calculate ranks and create leaderboard entries
     const entries: LeaderboardEntry[] = sorted.map((member, index) => {
       const rank = index + 1;
       const potentialReward = calculateRewardAmount(rank);
@@ -264,10 +236,8 @@ export default function Leaderboard({ communityId }: LeaderboardProps) {
     return entries;
   }, [members]);
 
-  // Get top 10 members
   const top10 = useMemo(() => leaderboard.slice(0, 10), [leaderboard]);
 
-  // Find current user's position
   const currentUserEntry = useMemo(() => {
     if (!wallet) return null;
     return leaderboard.find(entry => entry.member.wallet === wallet.publicKey.toString());
@@ -277,11 +247,18 @@ export default function Leaderboard({ communityId }: LeaderboardProps) {
     return `${wallet.slice(0, 4)}...${wallet.slice(-4)}`;
   };
 
-  const getRankBadge = (rank: number) => {
-    if (rank === 1) return { emoji: '🥇', color: 'text-yellow-500', bg: 'bg-yellow-50 dark:bg-yellow-900/20', border: 'border-yellow-300 dark:border-yellow-700' };
-    if (rank === 2) return { emoji: '🥈', color: 'text-gray-400', bg: 'bg-gray-50 dark:bg-gray-900/20', border: 'border-gray-300 dark:border-gray-700' };
-    if (rank === 3) return { emoji: '🥉', color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-900/20', border: 'border-orange-300 dark:border-orange-700' };
-    return null;
+  const getRankColor = (rank: number) => {
+    if (rank === 1) return 'bg-yellow-400';
+    if (rank === 2) return 'bg-gray-300';
+    if (rank === 3) return 'bg-orange-400';
+    return 'bg-white';
+  };
+
+  const getRankEmoji = (rank: number) => {
+    if (rank === 1) return '🥇';
+    if (rank === 2) return '🥈';
+    if (rank === 3) return '🥉';
+    return `#${rank}`;
   };
 
   if (loading) {
@@ -290,16 +267,16 @@ export default function Leaderboard({ communityId }: LeaderboardProps) {
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-950 rounded-lg p-6 border border-red-200 dark:border-red-800">
+      <div className="bg-red-400 border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <p className="text-red-900 dark:text-red-100 font-semibold">{error}</p>
+              <p className="text-black font-bold">{error}</p>
               {retryCount > 0 && retryCount < MAX_RETRIES && (
-                <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                <p className="text-sm text-black font-bold mt-1">
                   Retrying... (Attempt {retryCount + 1} of {MAX_RETRIES})
                 </p>
               )}
@@ -310,9 +287,9 @@ export default function Leaderboard({ communityId }: LeaderboardProps) {
               setRetryCount(0);
               fetchMembers();
             }}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+            className="px-4 py-2 bg-black text-red-400 font-black border-2 border-black hover:bg-white hover:text-black transition-all"
           >
-            Retry Now
+            RETRY
           </button>
         </div>
       </div>
@@ -321,283 +298,166 @@ export default function Leaderboard({ communityId }: LeaderboardProps) {
 
   if (members.length === 0) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <div className="text-center max-w-md">
-          <svg
-            className="mx-auto h-16 w-16 text-zinc-400 dark:text-zinc-600 mb-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-            />
-          </svg>
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
-            No leaderboard yet
-          </h3>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            The leaderboard will appear once members start earning reputation through community activities.
-          </p>
+      <div className="bg-white border-4 border-black p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center">
+        <div className="w-20 h-20 bg-pink-400 border-4 border-black mx-auto mb-6 flex items-center justify-center text-4xl">
+          🏆
         </div>
+        <h3 className="text-2xl font-black text-black mb-2">NO LEADERBOARD YET</h3>
+        <p className="text-lg font-bold text-black">
+          Start earning reputation through community activities!
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-          Member Leaderboard
-        </h2>
-        <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 mt-1">
-          Top performers ranked by reputation and activity
+        <h2 className="text-2xl font-black text-black">LEADERBOARD</h2>
+        <p className="text-sm font-bold text-black mt-1">
+          Top performers ranked by reputation
         </p>
       </div>
 
       {/* Success Message */}
       {claimSuccess && (
-        <div className="bg-green-50 dark:bg-green-950 rounded-lg p-4 border border-green-200 dark:border-green-800">
+        <div className="bg-lime-400 border-4 border-black p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex items-center gap-2">
-            <span className="text-green-600 dark:text-green-400 text-xl">✓</span>
-            <p className="text-green-900 dark:text-green-100 font-semibold">{claimSuccess}</p>
+            <span className="text-black text-xl font-black">✓</span>
+            <p className="text-black font-bold">{claimSuccess}</p>
           </div>
         </div>
       )}
 
       {/* Error Message */}
       {claimError && (
-        <div className="bg-red-50 dark:bg-red-950 rounded-lg p-4 border border-red-200 dark:border-red-800">
+        <div className="bg-red-400 border-4 border-black p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-red-600 dark:text-red-400 text-xl">✕</span>
-              <p className="text-red-900 dark:text-red-100 font-semibold">{claimError}</p>
+              <span className="text-black text-xl font-black">✕</span>
+              <p className="text-black font-bold">{claimError}</p>
             </div>
             <button
               onClick={() => setClaimError(null)}
-              className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200"
+              className="text-black hover:bg-black hover:text-red-400 p-1 border-2 border-black transition-all"
             >
-              Dismiss
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
         </div>
       )}
 
-      {/* Treasury Balance Info */}
+      {/* Treasury Balance */}
       {treasuryBalance !== null && (
-        <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-3 border border-blue-200 dark:border-blue-800">
-          <p className="text-sm text-blue-900 dark:text-blue-100">
-            <span className="font-semibold">Treasury Balance:</span> {treasuryBalance.toFixed(2)} tokens
+        <div className="bg-cyan-400 border-4 border-black p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-sm font-black text-black">
+            TREASURY: {treasuryBalance.toFixed(2)} TOKENS
           </p>
         </div>
       )}
 
       {/* Current User's Rank (if not in top 10) */}
       {currentUserEntry && currentUserEntry.rank > 10 && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 sm:p-4 border-2 border-blue-300 dark:border-blue-700">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
+        <div className="bg-yellow-400 border-4 border-black p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="text-2xl font-black text-black">
                 #{currentUserEntry.rank}
               </div>
               <div>
-                <p className="text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                  Your Position
-                </p>
-                <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+                <p className="text-base font-black text-black">YOUR POSITION</p>
+                <p className="text-sm font-bold text-black">
                   {currentUserEntry.reputation} reputation
                 </p>
               </div>
             </div>
-            <div className="text-left sm:text-right">
-              <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
-                Keep going to reach top 10!
-              </p>
-            </div>
+            <p className="text-sm font-bold text-black">
+              Keep going!
+            </p>
           </div>
         </div>
       )}
 
       {/* Top 10 Leaderboard */}
-      <div className="space-y-2 sm:space-y-3">
+      <div className="space-y-3">
         {top10.map((entry) => {
-          const badge = getRankBadge(entry.rank);
           const isUser = entry.member.wallet === wallet?.publicKey.toString();
+          const rankColor = getRankColor(entry.rank);
 
           return (
             <div
               key={entry.member.publicKey}
-              className={`rounded-lg p-3 sm:p-4 border-2 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 animate-fadeIn ${
-                isUser
-                  ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700'
-                  : badge
-                  ? `${badge.bg} ${badge.border}`
-                  : 'bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 hover:border-blue-400 dark:hover:border-blue-600'
+              className={`${rankColor} border-4 border-black p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all ${
+                isUser ? 'ring-4 ring-cyan-400' : ''
               }`}
             >
-              {/* Mobile Layout */}
-              <div className="flex flex-col gap-3 sm:hidden">
-                <div className="flex items-center justify-between">
-                  {/* Rank */}
-                  <div className="shrink-0 w-12 text-center">
-                    {badge ? (
-                      <div className="flex flex-col items-center">
-                        <span className="text-2xl animate-bounce-subtle">{badge.emoji}</span>
-                        <span className={`text-xs font-bold ${badge.color}`}>
-                          #{entry.rank}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="text-xl font-bold text-zinc-600 dark:text-zinc-400">
-                        #{entry.rank}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Member Info */}
-                  <div className="flex-1 min-w-0 px-3">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 truncate">
-                        {entry.member.name}
-                      </h3>
-                      {isUser && (
-                        <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-600 text-white shrink-0">
-                          YOU
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 font-mono truncate">
-                      {formatWallet(entry.member.wallet)}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Stats Row */}
-                <div className="flex items-center justify-around border-t border-zinc-200 dark:border-zinc-700 pt-2">
-                  <div className="text-center">
-                    <p className="text-xs text-zinc-600 dark:text-zinc-400">Reputation</p>
-                    <p className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
-                      {entry.reputation}
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-zinc-600 dark:text-zinc-400">Activity</p>
-                    <p className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
-                      {entry.activityCount}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Reward Eligibility */}
-                {entry.rewardEligible && (
-                  <div className="bg-green-100 dark:bg-green-900/30 rounded-lg p-3 border border-green-300 dark:border-green-700">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="text-xs text-green-800 dark:text-green-200 font-semibold">
-                        Reward Eligible
-                      </p>
-                      <p className="text-base font-bold text-green-900 dark:text-green-100">
-                        {entry.potentialReward} tokens
-                      </p>
-                    </div>
-                    {isUser && (
-                      <>
-                        {alreadyClaimed ? (
-                          <div className="w-full px-3 py-2 text-xs font-semibold rounded bg-gray-400 text-white text-center">
-                            Already Claimed
-                          </div>
-                        ) : (
-                          <button
-                            className="w-full px-3 py-2 text-xs font-semibold rounded bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white transition-all duration-200 transform active:scale-95 hover:shadow-md"
-                            onClick={() => handleClaimReward(entry.rank, entry.potentialReward!)}
-                            disabled={claimingReward || alreadyClaimed}
-                          >
-                            {claimingReward ? 'Claiming...' : 'Claim Reward'}
-                          </button>
-                        )}
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Desktop Layout */}
-              <div className="hidden sm:flex items-center gap-4">
+              <div className="flex items-center gap-4">
                 {/* Rank */}
                 <div className="shrink-0 w-16 text-center">
-                  {badge ? (
-                    <div className="flex flex-col items-center">
-                      <span className="text-3xl animate-bounce-subtle">{badge.emoji}</span>
-                      <span className={`text-sm font-bold ${badge.color}`}>
-                        #{entry.rank}
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="text-2xl font-bold text-zinc-600 dark:text-zinc-400">
-                      #{entry.rank}
-                    </div>
-                  )}
+                  <div className="text-3xl font-black text-black">
+                    {getRankEmoji(entry.rank)}
+                  </div>
                 </div>
 
                 {/* Member Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                    <h3 className="text-lg font-black text-black truncate">
                       {entry.member.name}
                     </h3>
                     {isUser && (
-                      <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-600 text-white">
+                      <span className="px-2 py-1 text-xs font-black bg-black text-cyan-400 border-2 border-black">
                         YOU
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400 font-mono">
+                  <p className="text-sm font-bold text-black font-mono">
                     {formatWallet(entry.member.wallet)}
                   </p>
                 </div>
 
                 {/* Stats */}
                 <div className="flex items-center gap-6">
-                  <div className="text-right">
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">Reputation</p>
-                    <p className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                  <div className="text-center">
+                    <p className="text-xs font-black text-black">REP</p>
+                    <p className="text-2xl font-black text-black">
                       {entry.reputation}
                     </p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">Activity</p>
-                    <p className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                  <div className="text-center">
+                    <p className="text-xs font-black text-black">ACTIVITY</p>
+                    <p className="text-2xl font-black text-black">
                       {entry.activityCount}
                     </p>
                   </div>
                 </div>
 
-                {/* Reward Eligibility */}
+                {/* Reward */}
                 {entry.rewardEligible && (
                   <div className="shrink-0">
-                    <div className="bg-green-100 dark:bg-green-900/30 rounded-lg p-3 border border-green-300 dark:border-green-700">
-                      <p className="text-xs text-green-800 dark:text-green-200 font-semibold mb-1">
-                        Reward Eligible
+                    <div className="bg-lime-400 border-4 border-black p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                      <p className="text-xs font-black text-black mb-1">
+                        REWARD
                       </p>
-                      <p className="text-lg font-bold text-green-900 dark:text-green-100">
-                        {entry.potentialReward} tokens
+                      <p className="text-lg font-black text-black">
+                        {entry.potentialReward} 🪙
                       </p>
                       {isUser && (
                         <>
                           {alreadyClaimed ? (
-                            <div className="mt-2 w-full px-3 py-1 text-xs font-semibold rounded bg-gray-400 text-white text-center">
-                              Already Claimed
+                            <div className="mt-2 w-full px-3 py-2 text-xs font-black bg-gray-400 text-white text-center border-2 border-black">
+                              CLAIMED
                             </div>
                           ) : (
                             <button
-                              className="mt-2 w-full px-3 py-1 text-xs font-semibold rounded bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white transition-all duration-200 transform active:scale-95 hover:shadow-md"
+                              className="mt-2 w-full px-3 py-2 text-xs font-black bg-black text-lime-400 hover:bg-white hover:text-black border-2 border-black transition-all disabled:opacity-50"
                               onClick={() => handleClaimReward(entry.rank, entry.potentialReward!)}
                               disabled={claimingReward || alreadyClaimed}
                             >
-                              {claimingReward ? 'Claiming...' : 'Claim Reward'}
+                              {claimingReward ? 'CLAIMING...' : 'CLAIM'}
                             </button>
                           )}
                         </>
@@ -612,10 +472,9 @@ export default function Leaderboard({ communityId }: LeaderboardProps) {
       </div>
 
       {/* Footer Info */}
-      <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-4 border border-zinc-200 dark:border-zinc-700">
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          <span className="font-semibold">How rankings work:</span> Members are ranked by reputation score, 
-          then by activity count, and finally by join date. Top 3 members are eligible for token rewards.
+      <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <p className="text-sm font-bold text-black">
+          <span className="font-black">HOW IT WORKS:</span> Members ranked by reputation, then activity, then join date. Top 3 get token rewards!
         </p>
       </div>
     </div>

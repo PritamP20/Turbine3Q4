@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
-import { AnchorProvider } from '@coral-xyz/anchor';
+import { AnchorProvider, BN } from '@coral-xyz/anchor';
 import { PublicKey, SystemProgram } from '@solana/web3.js';
 import { getProgram, getConnection } from '@/lib/anchor-setup';
 
@@ -119,22 +119,43 @@ export default function GovernanceSection({ communityId }: GovernanceSectionProp
 
       const communityPda = new PublicKey(communityId);
       
-      // Generate a unique proposal PDA
-      const proposalId = Date.now().toString();
+      // Derive proposal PDA using title (as per the Rust program)
       const [proposalPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from('proposal'), communityPda.toBuffer(), Buffer.from(proposalId)],
+        [Buffer.from('proposal'), communityPda.toBuffer(), Buffer.from(title)],
         program.programId
       );
 
-      await program.methods
-        .createProposal(proposalId, title, description)
-        .accountsStrict({
+      // Derive member PDA
+      const [memberPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from('member'), communityPda.toBuffer(), wallet.publicKey.toBuffer()],
+        program.programId
+      );
+
+      // Proposal parameters
+      // ProposalType enum: Transfer, ConfigChange, MemberAction, Custom
+      const proposalType = { custom: {} }; // Use Custom for general text proposals
+      const executionData = Buffer.from([]); // Empty execution data as Buffer
+      const votingDuration = new BN(7 * 24 * 60 * 60); // 7 days in seconds as BN
+
+      console.log('Creating proposal with accounts:', {
+        proposal: proposalPda.toString(),
+        community: communityPda.toString(),
+        member: memberPda.toString(),
+        proposer: wallet.publicKey.toString(),
+      });
+
+      const tx = await program.methods
+        .createProposal(title, description, proposalType, executionData, votingDuration)
+        .accounts({
           proposal: proposalPda,
           community: communityPda,
+          member: memberPda,
           proposer: wallet.publicKey,
           systemProgram: SystemProgram.programId,
         })
         .rpc();
+
+      console.log('Proposal created successfully, tx:', tx);
 
       setMessage('Proposal created successfully! 🎉');
       setTitle('');
@@ -147,7 +168,20 @@ export default function GovernanceSection({ communityId }: GovernanceSectionProp
       }, 2000);
     } catch (error: any) {
       console.error('Error creating proposal:', error);
-      setMessage(`Error: ${error.message}`);
+      console.error('Error details:', {
+        message: error.message,
+        logs: error.logs,
+        code: error.code,
+      });
+      
+      let errorMessage = 'Failed to create proposal. ';
+      if (error.message?.includes('already in use')) {
+        errorMessage += 'A proposal with this title already exists. Please use a different title.';
+      } else if (error.message) {
+        errorMessage += error.message;
+      }
+      
+      setMessage(`Error: ${errorMessage}`);
     } finally {
       setCreating(false);
     }
@@ -167,6 +201,9 @@ export default function GovernanceSection({ communityId }: GovernanceSectionProp
       const proposalPda = new PublicKey(proposalKey);
       const communityPda = new PublicKey(communityId);
 
+      // Fetch community to get the name for token mint derivation
+      const communityAccount = await (program.account as any).community.fetch(communityPda);
+
       const [votePda] = PublicKey.findProgramAddressSync(
         [Buffer.from('vote'), proposalPda.toBuffer(), wallet.publicKey.toBuffer()],
         program.programId
@@ -177,15 +214,78 @@ export default function GovernanceSection({ communityId }: GovernanceSectionProp
         program.programId
       );
 
+      const [tokenMintPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from('token_mint'), Buffer.from(communityAccount.name)],
+        program.programId
+      );
+
+      // Derive associated token account
+      const TOKEN_PROGRAM_ID = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+      const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
+
+      const [voterTokenAccount] = PublicKey.findProgramAddressSync(
+        [
+          wallet.publicKey.toBuffer(),
+          TOKEN_PROGRAM_ID.toBuffer(),
+          tokenMintPda.toBuffer(),
+        ],
+        ASSOCIATED_TOKEN_PROGRAM_ID
+      );
+
+      // Check if voter token account exists, if not create it
+      let voterTokenAccountInfo = await connection.getAccountInfo(voterTokenAccount);
+      
+      if (!voterTokenAccountInfo) {
+        // Create associated token account
+        const { createAssociatedTokenAccountInstruction } = await import('@solana/spl-token');
+        
+        const createAtaIx = createAssociatedTokenAccountInstruction(
+          wallet.publicKey, // payer
+          voterTokenAccount, // ata
+          wallet.publicKey, // owner
+          tokenMintPda, // mint
+          TOKEN_PROGRAM_ID,
+          ASSOCIATED_TOKEN_PROGRAM_ID
+        );
+
+        const { Transaction } = await import('@solana/web3.js');
+        const tx = new Transaction().add(createAtaIx);
+        
+        await provider.sendAndConfirm(tx);
+        console.log('Created voter token account');
+        
+        // Refresh account info
+        voterTokenAccountInfo = await connection.getAccountInfo(voterTokenAccount);
+      }
+
+      // Check token balance
+      if (voterTokenAccountInfo) {
+        const { AccountLayout } = await import('@solana/spl-token');
+        const tokenAccountData = AccountLayout.decode(voterTokenAccountInfo.data);
+        const balance = Number(tokenAccountData.amount);
+        
+        if (balance === 0) {
+          setMessage('Error: You need community tokens to vote. Your token balance is 0. Join events or participate in the community to earn tokens!');
+          setVoting(null);
+          return;
+        }
+        
+        console.log('Voter token balance:', balance);
+      }
+
       const voteTypeEnum = voteType === 'yes' ? { yes: {} } : { no: {} };
 
       await program.methods
         .castVote(voteTypeEnum)
-        .accountsStrict({
+        .accounts({
           vote: votePda,
           proposal: proposalPda,
           member: memberPda,
+          community: communityPda,
+          voterTokenAccount: voterTokenAccount,
+          tokenMint: tokenMintPda,
           voter: wallet.publicKey,
+          tokenProgram: TOKEN_PROGRAM_ID,
           systemProgram: SystemProgram.programId,
         })
         .rpc();
@@ -198,6 +298,11 @@ export default function GovernanceSection({ communityId }: GovernanceSectionProp
       }, 2000);
     } catch (error: any) {
       console.error('Error voting:', error);
+      console.error('Error details:', {
+        message: error.message,
+        logs: error.logs,
+        code: error.code,
+      });
       setMessage(`Error: ${error.message}`);
     } finally {
       setVoting(null);

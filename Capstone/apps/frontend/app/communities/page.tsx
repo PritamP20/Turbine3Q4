@@ -125,15 +125,28 @@ export default function CommunitiesPage() {
         program.programId
       );
 
+      // Derive treasury token account (ATA for treasury)
+      const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
+      const [treasuryTokenAccount] = PublicKey.findProgramAddressSync(
+        [
+          treasuryPda.toBuffer(),
+          TOKEN_PROGRAM_ID.toBuffer(),
+          tokenMintPda.toBuffer(),
+        ],
+        ASSOCIATED_TOKEN_PROGRAM_ID
+      );
+
       const tx = await program.methods
         .initializeCommunity(communityName, tokenSymbol, 9, governanceThreshold)
-        .accountsStrict({
+        .accounts({
           community: communityPda,
           tokenMint: tokenMintPda,
           collectionMint: collectionMintPda,
           treasury: treasuryPda,
+          treasuryTokenAccount: treasuryTokenAccount,
           admin: wallet.publicKey,
           tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           systemProgram: SystemProgram.programId,
           rent: SYSVAR_RENT_PUBKEY,
         })

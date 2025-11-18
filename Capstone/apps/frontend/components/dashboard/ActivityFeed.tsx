@@ -60,36 +60,24 @@ export default function ActivityFeed({ communityId }: ActivityFeedProps) {
 
   if (error) {
     return (
-      <div className="text-center py-12">
-        <p className="text-red-600 dark:text-red-400">Failed to load activities</p>
+      <div className="bg-red-400 border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center">
+        <p className="text-black font-black text-lg">FAILED TO LOAD ACTIVITIES</p>
       </div>
     );
   }
 
   if (allActivities.length === 0) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <div className="text-center max-w-md">
-          <svg
-            className="mx-auto h-16 w-16 text-zinc-400 dark:text-zinc-600 mb-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-            />
-          </svg>
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
-            No activities yet
-          </h3>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Community activities like proposals, events, and member actions will appear here.
-          </p>
+      <div className="bg-white border-4 border-black p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center">
+        <div className="w-20 h-20 bg-cyan-400 border-4 border-black mx-auto mb-6 flex items-center justify-center text-4xl">
+          📋
         </div>
+        <h3 className="text-2xl font-black text-black mb-2">
+          NO ACTIVITIES YET
+        </h3>
+        <p className="text-lg font-bold text-black">
+          Community activities will appear here!
+        </p>
       </div>
     );
   }
@@ -108,9 +96,9 @@ export default function ActivityFeed({ communityId }: ActivityFeedProps) {
         <div ref={loadMoreRef} className="text-center pt-4">
           <button
             onClick={loadMore}
-            className="w-full sm:w-auto px-6 py-2 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 transform active:scale-95 hover:shadow-md"
+            className="w-full sm:w-auto px-6 py-3 font-black bg-cyan-400 text-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
           >
-            Load More ({allActivities.length - paginatedActivities.length} remaining)
+            LOAD MORE ({allActivities.length - paginatedActivities.length})
           </button>
         </div>
       )}

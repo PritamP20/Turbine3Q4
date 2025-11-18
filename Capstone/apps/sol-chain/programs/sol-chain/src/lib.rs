@@ -41,6 +41,13 @@ pub mod sol_chain {
             governance_threshold,
             transfer_fee_bps,
         )
+    }
+
+    pub fn mint_community_tokens(
+        ctx: Context<MintCommunityTokens>,
+        amount: u64,
+    ) -> Result<()> {
+        instructions::community::mint_community_tokens(ctx, amount)
     } 
 
     // Member instructions

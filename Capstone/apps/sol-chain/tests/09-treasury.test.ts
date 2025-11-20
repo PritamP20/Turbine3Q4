@@ -1,8 +1,3 @@
-/**
- * Treasury Module Tests
- * Tests: Deposit to Treasury
- */
-
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { SolChain } from "../target/types/sol_chain";

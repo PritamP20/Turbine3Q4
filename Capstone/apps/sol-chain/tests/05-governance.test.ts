@@ -1,8 +1,3 @@
-/**
- * Governance Module Tests
- * Tests: Create Proposal, Cancel Proposal
- */
-
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { SolChain } from "../target/types/sol_chain";
@@ -28,7 +23,6 @@ describe("Governance Module", () => {
       program.programId
     );
 
-    // Fund account
     try {
       const balance = await provider.connection.getBalance(member1.publicKey);
       if (balance < 0.5 * anchor.web3.LAMPORTS_PER_SOL) {

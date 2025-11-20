@@ -1,8 +1,3 @@
-/**
- * NFC Module Tests
- * Tests: Create, Authenticate, Transfer, Revoke NFC Cards
- */
-
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { SolChain } from "../target/types/sol_chain";

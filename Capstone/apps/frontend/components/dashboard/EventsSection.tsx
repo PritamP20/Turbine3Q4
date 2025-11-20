@@ -145,6 +145,9 @@ export default function EventsSection({ communityId }: EventsSectionProps) {
         const eventPubkey = new PublicKey(eventPublicKey);
         const communityPubkey = new PublicKey(communityId);
 
+        // Get event account to get the event name (needed for PDA derivation)
+        const eventAccount = await (program.account as any).event.fetch(eventPubkey);
+        
         // Get community account to get the name
         const communityAccount = await (program.account as any).community.fetch(communityPubkey);
 
@@ -213,7 +216,28 @@ export default function EventsSection({ communityId }: EventsSectionProps) {
           console.log("Created virtual RSVP card:", createCardTx);
         }
 
+        // Check if member exists, if not show error
+        let memberExists = false;
+        try {
+          await (program.account as any).member.fetch(memberPda);
+          memberExists = true;
+        } catch (e) {
+          console.error("Member account not found. User needs to join the community first.");
+          throw new Error("You must join this community before RSVPing to events. Please register as a member first.");
+        }
+
         // Now record attendance (RSVP)
+        console.log("Recording attendance with accounts:", {
+          event: eventPubkey.toString(),
+          attendance: attendancePda.toString(),
+          member: memberPda.toString(),
+          nfcCard: nfcCardPda.toString(),
+          community: communityPubkey.toString(),
+          tokenMint: tokenMintPda.toString(),
+          memberTokenAccount: memberTokenAccount.toString(),
+          memberWallet: wallet.publicKey.toString(),
+        });
+
         const tx = await (program.methods as any)
           .recordAttendance(cardId)
           .accounts({
@@ -239,6 +263,8 @@ export default function EventsSection({ communityId }: EventsSectionProps) {
       await fetchEvents();
     } catch (err: any) {
       // Log error for debugging
+      console.error("RSVP Error:", err);
+      
       const parsedError = logTransactionError('RSVP', err, {
         eventPublicKey,
         communityId,
@@ -248,6 +274,7 @@ export default function EventsSection({ communityId }: EventsSectionProps) {
       await fetchEvents();
       
       // Show user-friendly error message
+      alert(err.message || parsedError.userFriendlyMessage || 'Failed to RSVP to event. Please try again.');
       alert(parsedError.userFriendlyMessage);
       throw err;
     }

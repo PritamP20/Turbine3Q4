@@ -1,8 +1,3 @@
-/**
- * Setup Test - Run this first to initialize shared test data
- * Creates community and members that other tests depend on
- */
-
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { SolChain } from "../target/types/sol_chain";

@@ -1,22 +1,20 @@
-// MemberManagement.tsx - FULL VERSION with Neo Brutalism
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { AnchorProvider, BN } from '@coral-xyz/anchor';
-import { PublicKey, SystemProgram } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
+import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { getProgram, getConnection } from '@/lib/anchor-setup';
-import { getAccount } from '@solana/spl-token';
 
 interface Member {
-  id: string;
-  address: string;
+  publicKey: string;
+  wallet: string;
   name: string;
-  joinedAt: Date;
-  tokenBalance: number;
   reputation: number;
-  nfcCards: number;
-  isActive: boolean;
+  eventsAttended: number;
+  tokenBalance: number;
+  joinedAt: Date;
 }
 
 interface MemberManagementProps {
@@ -24,76 +22,78 @@ interface MemberManagementProps {
 }
 
 export function MemberManagement({ communityId }: MemberManagementProps) {
-  const wallet = useAnchorWallet();
+  const wallet = useWallet();
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [showDistributeModal, setShowDistributeModal] = useState(false);
+  const [distributeAmount, setDistributeAmount] = useState('');
+  const [distributing, setDistributing] = useState(false);
+  const [message, setMessage] = useState('');
+  const [tokenSymbol, setTokenSymbol] = useState('TOKENS');
 
   useEffect(() => {
-    if (communityId && wallet) {
+    if (wallet.connected) {
       fetchMembers();
     }
-  }, [communityId, wallet]);
+  }, [wallet.connected, communityId]);
 
   const fetchMembers = async () => {
-    if (!wallet) return;
-    
     setLoading(true);
     try {
       const connection = getConnection();
-      const provider = new AnchorProvider(connection, wallet, {});
-      const program = getProgram(provider);
+      const provider = new AnchorProvider(connection, wallet as any, {});
+      const program: any = getProgram(provider);
 
       const communityPda = new PublicKey(communityId);
+      const community = await program.account.community.fetch(communityPda);
+      const tokenMint = new PublicKey(community.tokenMint);
+      
+      setTokenSymbol(community.tokenSymbol);
 
-      const memberAccounts = await (program.account as any).member.all([
+      // Fetch all members for this community
+      const memberAccounts = await program.account.member.all([
         {
           memcmp: {
             offset: 8,
             bytes: communityPda.toBase58(),
-          }
-        }
+          },
+        },
       ]);
 
-      const community = await (program.account as any).community.fetch(communityPda);
-
-      const membersData: Member[] = await Promise.all(
+      // Fetch token balances for each member
+      const membersWithBalances = await Promise.all(
         memberAccounts.map(async (account: any) => {
           const memberData = account.account;
-          
           let tokenBalance = 0;
+
           try {
-            const [memberTokenAccount] = PublicKey.findProgramAddressSync(
-              [
-                Buffer.from('token_account'),
-                community.tokenMint.toBuffer(),
-                memberData.wallet.toBuffer(),
-              ],
-              program.programId
+            const memberTokenAccount = await getAssociatedTokenAddress(
+              tokenMint,
+              new PublicKey(memberData.wallet),
+              false
             );
-            
-            const tokenAccount = await getAccount(connection, memberTokenAccount);
-            tokenBalance = Number(tokenAccount.amount);
-          } catch (error) {
-            // Token account doesn't exist yet
+            const balance = await connection.getTokenAccountBalance(memberTokenAccount);
+            tokenBalance = parseFloat(balance.value.uiAmount?.toString() || '0');
+          } catch (err) {
+            // Member doesn't have a token account yet
+            tokenBalance = 0;
           }
 
           return {
-            id: account.publicKey.toString(),
-            address: memberData.wallet.toString(),
+            publicKey: account.publicKey.toString(),
+            wallet: memberData.wallet.toString(),
             name: memberData.name,
-            joinedAt: new Date(memberData.joinedAt.toNumber() * 1000),
+            reputation: memberData.reputationScore,
+            eventsAttended: memberData.totalEventsAttended,
             tokenBalance,
-            reputation: memberData.reputation,
-            nfcCards: 0,
-            isActive: true,
+            joinedAt: new Date(memberData.joinedAt.toNumber() * 1000),
           };
         })
       );
 
-      setMembers(membersData);
+      setMembers(membersWithBalances);
     } catch (error) {
       console.error('Error fetching members:', error);
       setMessage('Failed to load members');
@@ -102,209 +102,286 @@ export function MemberManagement({ communityId }: MemberManagementProps) {
     }
   };
 
-  const filteredMembers = members.filter((member) => {
-    const matchesSearch = 
-      member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.address.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesFilter = 
-      filterStatus === 'all' ||
-      (filterStatus === 'active' && member.isActive) ||
-      (filterStatus === 'inactive' && !member.isActive);
+  const handleDistributeTokens = async () => {
+    if (!selectedMember || !distributeAmount) return;
 
-    return matchesSearch && matchesFilter;
-  });
-
-  const handleUpdateReputation = async (memberId: string, delta: number) => {
-    if (!wallet) return;
-
-    setLoading(true);
+    setDistributing(true);
     setMessage('');
 
     try {
       const connection = getConnection();
-      const provider = new AnchorProvider(connection, wallet, {});
-      const program = getProgram(provider);
+      const provider = new AnchorProvider(connection, wallet as any, {});
+      const program: any = getProgram(provider);
 
       const communityPda = new PublicKey(communityId);
-      const memberPda = new PublicKey(memberId);
+      const community = await program.account.community.fetch(communityPda);
+      const tokenMint = new PublicKey(community.tokenMint);
+
+      const [treasuryPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from('treasury'), communityPda.toBuffer()],
+        program.programId
+      );
+
+      const treasuryTokenAccount = await getAssociatedTokenAddress(
+        tokenMint,
+        treasuryPda,
+        true
+      );
+
+      const recipientWallet = new PublicKey(selectedMember.wallet);
+      const recipientTokenAccount = await getAssociatedTokenAddress(
+        tokenMint,
+        recipientWallet,
+        false
+      );
+
+      const amount = parseFloat(distributeAmount) * Math.pow(10, 9);
+
+      // Use transfer_tokens instruction
+      const [senderMember] = PublicKey.findProgramAddressSync(
+        [Buffer.from('member'), communityPda.toBuffer(), wallet.publicKey!.toBuffer()],
+        program.programId
+      );
+
+      const [recipientMember] = PublicKey.findProgramAddressSync(
+        [Buffer.from('member'), communityPda.toBuffer(), recipientWallet.toBuffer()],
+        program.programId
+      );
 
       const tx = await program.methods
-        .updateReputation(new BN(delta), `Admin adjustment: ${delta > 0 ? '+' : ''}${delta}`)
-        .accountsStrict({
-          member: memberPda,
+        .transferTokens(new BN(amount), `Admin distribution`)
+        .accounts({
           community: communityPda,
-          authority: wallet.publicKey,
-          systemProgram: SystemProgram.programId,
+          senderMember: senderMember,
+          recipientMember: recipientMember,
+          senderTokenAccount: treasuryTokenAccount,
+          recipientTokenAccount: recipientTokenAccount,
+          recipient: recipientWallet,
+          treasuryTokenAccount: treasuryTokenAccount,
+          tokenMint: tokenMint,
+          treasury: treasuryPda,
+          sender: wallet.publicKey!,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: new PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'),
+          systemProgram: new PublicKey('11111111111111111111111111111111'),
         })
         .rpc();
 
-      setMessage(`Reputation updated! TX: ${tx}`);
-      setTimeout(() => {
-        fetchMembers();
-        setMessage('');
-      }, 2000);
+      setMessage(`✅ Distributed ${distributeAmount} ${tokenSymbol} to ${selectedMember.name}! TX: ${tx}`);
+      setDistributeAmount('');
+      setShowDistributeModal(false);
+      setSelectedMember(null);
+      
+      setTimeout(() => fetchMembers(), 2000);
     } catch (error: any) {
-      console.error('Error updating reputation:', error);
-      setMessage(`Error: ${error.message}`);
+      console.error('Distribution error:', error);
+      setMessage(`❌ Error: ${error.message}`);
     } finally {
-      setLoading(false);
+      setDistributing(false);
     }
   };
 
+  const filteredMembers = members.filter(
+    (member) =>
+      member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.wallet.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div>
-      <h2 className="text-3xl font-black text-black mb-6">MEMBER MANAGEMENT</h2>
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <h2 className="text-3xl font-black text-black mb-2">MEMBER MANAGEMENT</h2>
+          <p className="text-lg font-bold text-black">
+            View and manage community members
+          </p>
+        </div>
+        <button
+          onClick={fetchMembers}
+          disabled={loading}
+          className="bg-cyan-400 text-black px-4 py-2 font-black border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+        >
+          🔄 REFRESH
+        </button>
+      </div>
 
       {message && (
-        <div className={`mb-6 p-4 border-4 border-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
-          message.includes('Error') ? 'bg-red-400' : 'bg-lime-400'
+        <div className={`border-4 border-black p-4 mb-6 font-bold ${
+          message.includes('✅') ? 'bg-green-200' : 'bg-red-200'
         }`}>
-          <div className="flex items-center justify-between">
-            <span className="text-black">{message}</span>
-            <button onClick={() => setMessage('')} className="text-black hover:bg-black hover:text-white p-1 border-2 border-black">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+          {message}
         </div>
       )}
 
-      {/* Search and Filters */}
+      {/* Search */}
       <div className="bg-cyan-50 border-4 border-black p-4 mb-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="SEARCH BY NAME OR ADDRESS..."
-              className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold placeholder:text-gray-400 focus:outline-none focus:border-cyan-400"
-            />
-          </div>
-          <div className="flex gap-2">
-            {['all', 'active', 'inactive'].map((status) => (
-              <button
-                key={status}
-                onClick={() => setFilterStatus(status as typeof filterStatus)}
-                className={`px-6 py-3 font-black uppercase border-4 border-black transition-all ${
-                  filterStatus === status
-                    ? 'bg-cyan-400 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
-                    : 'bg-white text-black hover:bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-                }`}
-              >
-                {status}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Members List */}
-      <div className="space-y-4">
-        {loading && members.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-24 h-24 border-8 border-black border-t-cyan-400 rounded-full animate-spin mx-auto mb-6"></div>
-            <p className="text-xl font-black text-black">LOADING MEMBERS...</p>
-          </div>
-        ) : filteredMembers.length === 0 ? (
-          <div className="text-center py-12 bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-            <div className="w-20 h-20 bg-pink-400 border-4 border-black mx-auto mb-4 flex items-center justify-center text-4xl">
-              👥
-            </div>
-            <p className="text-xl font-black text-black mb-2">NO MEMBERS FOUND</p>
-            <p className="text-sm font-bold text-black">
-              {searchQuery ? 'Try adjusting your search' : 'Members will appear here once they join'}
-            </p>
-          </div>
-        ) : (
-          filteredMembers.map((member) => (
-            <div key={member.id} className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <h3 className="text-2xl font-black text-black">{member.name}</h3>
-                    <span className={`px-3 py-1 text-xs font-black border-2 border-black ${
-                      member.isActive ? 'bg-lime-400 text-black' : 'bg-gray-300 text-black'
-                    }`}>
-                      {member.isActive ? 'ACTIVE' : 'INACTIVE'}
-                    </span>
-                  </div>
-                  <p className="text-black text-sm font-mono font-bold mb-4 bg-gray-100 p-2 border-2 border-black">
-                    {member.address}
-                  </p>
-                  
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div className="bg-gray-50 border-2 border-black p-2">
-                      <span className="text-xs font-black text-black block mb-1">JOINED</span>
-                      <p className="text-sm font-bold text-black">{member.joinedAt.toLocaleDateString()}</p>
-                    </div>
-                    <div className="bg-gray-50 border-2 border-black p-2">
-                      <span className="text-xs font-black text-black block mb-1">TOKENS</span>
-                      <p className="text-sm font-bold text-black">{member.tokenBalance.toLocaleString()}</p>
-                    </div>
-                    <div className="bg-gray-50 border-2 border-black p-2">
-                      <span className="text-xs font-black text-black block mb-1">REPUTATION</span>
-                      <p className="text-sm font-bold text-black">{member.reputation}</p>
-                    </div>
-                    <div className="bg-gray-50 border-2 border-black p-2">
-                      <span className="text-xs font-black text-black block mb-1">NFC CARDS</span>
-                      <p className="text-sm font-bold text-black">{member.nfcCards}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleUpdateReputation(member.id, 10)}
-                    disabled={loading}
-                    className="bg-lime-400 text-black px-4 py-3 font-black text-sm border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-50"
-                  >
-                    +10 REP
-                  </button>
-                  <button
-                    onClick={() => handleUpdateReputation(member.id, -10)}
-                    disabled={loading}
-                    className="bg-red-400 text-black px-4 py-3 font-black text-sm border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-50"
-                  >
-                    -10 REP
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="SEARCH BY NAME OR ADDRESS..."
+          className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold placeholder:text-gray-400 focus:outline-none focus:border-cyan-400"
+        />
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-cyan-400 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           <p className="text-black text-sm font-black mb-1">TOTAL MEMBERS</p>
           <p className="text-3xl font-black text-black">{members.length}</p>
         </div>
         <div className="bg-yellow-400 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <p className="text-black text-sm font-black mb-1">ACTIVE MEMBERS</p>
+          <p className="text-black text-sm font-black mb-1">AVG REPUTATION</p>
           <p className="text-3xl font-black text-black">
-            {members.filter(m => m.isActive).length}
+            {members.length > 0 ? Math.round(members.reduce((sum, m) => sum + m.reputation, 0) / members.length) : 0}
           </p>
         </div>
         <div className="bg-pink-400 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <p className="text-black text-sm font-black mb-1">TOTAL EVENTS</p>
+          <p className="text-3xl font-black text-black">
+            {members.reduce((sum, m) => sum + m.eventsAttended, 0)}
+          </p>
+        </div>
+        <div className="bg-lime-400 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           <p className="text-black text-sm font-black mb-1">TOTAL TOKENS</p>
           <p className="text-3xl font-black text-black">
             {members.reduce((sum, m) => sum + m.tokenBalance, 0).toLocaleString()}
           </p>
         </div>
-        <div className="bg-lime-400 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <p className="text-black text-sm font-black mb-1">AVG REPUTATION</p>
-          <p className="text-3xl font-black text-black">
-            {members.length > 0 
-              ? Math.round(members.reduce((sum, m) => sum + m.reputation, 0) / members.length)
-              : 0
-            }
+      </div>
+
+      {/* Members List */}
+      {loading ? (
+        <div className="text-center py-12 bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+          <div className="w-20 h-20 border-8 border-black border-t-cyan-400 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-xl font-black text-black">LOADING MEMBERS...</p>
+        </div>
+      ) : filteredMembers.length === 0 ? (
+        <div className="text-center py-12 bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+          <div className="w-20 h-20 bg-pink-400 border-4 border-black mx-auto mb-4 flex items-center justify-center text-4xl">
+            👥
+          </div>
+          <p className="text-xl font-black text-black mb-2">NO MEMBERS FOUND</p>
+          <p className="text-sm font-bold text-black">
+            {searchQuery ? 'Try a different search term' : 'Members will appear here once they join'}
           </p>
         </div>
-      </div>
+      ) : (
+        <div className="bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-cyan-400 border-b-4 border-black">
+                <tr>
+                  <th className="px-4 py-3 text-left font-black text-black">MEMBER</th>
+                  <th className="px-4 py-3 text-left font-black text-black">WALLET</th>
+                  <th className="px-4 py-3 text-center font-black text-black">REPUTATION</th>
+                  <th className="px-4 py-3 text-center font-black text-black">EVENTS</th>
+                  <th className="px-4 py-3 text-center font-black text-black">TOKENS</th>
+                  <th className="px-4 py-3 text-center font-black text-black">JOINED</th>
+                  <th className="px-4 py-3 text-center font-black text-black">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredMembers.map((member, index) => (
+                  <tr key={member.publicKey} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                    <td className="px-4 py-3 font-bold text-black">{member.name}</td>
+                    <td className="px-4 py-3 font-mono text-sm text-black">
+                      {member.wallet.slice(0, 4)}...{member.wallet.slice(-4)}
+                    </td>
+                    <td className="px-4 py-3 text-center font-bold text-black">{member.reputation}</td>
+                    <td className="px-4 py-3 text-center font-bold text-black">{member.eventsAttended}</td>
+                    <td className="px-4 py-3 text-center font-bold text-black">
+                      {member.tokenBalance.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-center text-sm font-bold text-black">
+                      {member.joinedAt.toLocaleDateString()}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <button
+                        onClick={() => {
+                          setSelectedMember(member);
+                          setShowDistributeModal(true);
+                        }}
+                        className="bg-lime-400 text-black px-4 py-2 font-black text-sm border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                      >
+                        💰 SEND TOKENS
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Distribute Tokens Modal */}
+      {showDistributeModal && selectedMember && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white border-8 border-black p-6 max-w-md w-full shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b-4 border-black">
+              <h3 className="text-2xl font-black text-black">DISTRIBUTE TOKENS</h3>
+              <button
+                onClick={() => {
+                  setShowDistributeModal(false);
+                  setSelectedMember(null);
+                  setDistributeAmount('');
+                }}
+                className="text-black hover:bg-black hover:text-white p-2 border-2 border-black font-black text-xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-sm font-black text-black mb-2">RECIPIENT</p>
+              <div className="bg-cyan-100 border-4 border-black p-4">
+                <p className="font-black text-black text-lg">{selectedMember.name}</p>
+                <p className="font-mono text-sm text-black">{selectedMember.wallet}</p>
+                <p className="text-sm font-bold text-black mt-2">
+                  Current Balance: {selectedMember.tokenBalance.toLocaleString()} {tokenSymbol}
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-black text-black mb-2 uppercase">
+                Amount ({tokenSymbol}) *
+              </label>
+              <input
+                type="number"
+                step="0.000000001"
+                required
+                value={distributeAmount}
+                onChange={(e) => setDistributeAmount(e.target.value)}
+                className="w-full bg-white border-4 border-black px-4 py-3 text-black font-bold focus:outline-none focus:border-lime-400"
+                placeholder="0"
+                disabled={distributing}
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleDistributeTokens}
+                disabled={distributing || !distributeAmount}
+                className="flex-1 bg-lime-400 text-black px-6 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all disabled:opacity-50"
+              >
+                {distributing ? 'SENDING...' : 'SEND TOKENS'}
+              </button>
+              <button
+                onClick={() => {
+                  setShowDistributeModal(false);
+                  setSelectedMember(null);
+                  setDistributeAmount('');
+                }}
+                className="bg-gray-200 text-black px-6 py-3 font-black border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+              >
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -32,7 +32,6 @@ pub fn initialize_community(
     let community_bump = ctx.bumps.community;
     let community_name_clone = community_name.clone();
     
-    // Set community fields
     {
         let community = &mut ctx.accounts.community;
         community.admin = ctx.accounts.admin.key();
@@ -48,8 +47,6 @@ pub fn initialize_community(
         community.created_at = clock.unix_timestamp;
         community.bump = community_bump;
     }
-
-    // Mint initial supply of 1000 tokens to treasury
     let initial_supply = 1000u64 * 10u64.pow(token_decimals as u32);
     let community_name_bytes = community_name.as_bytes();
     let seeds = &[b"community", community_name_bytes, &[community_bump]];
@@ -135,7 +132,6 @@ pub struct InitializeCommunity<'info> {
     )]
     pub collection_mint: Account<'info, Mint>,
 
-    /// CHECK: Treasury PDA
     #[account(
         seeds = [b"treasury", community.key().as_ref()],
         bump
@@ -188,7 +184,6 @@ pub fn
 
     require!(amount > 0, SocialChainError::InvalidTokenAmount);
 
-    // Mint tokens to treasury
     let community_name = community.name.as_bytes();
     let seeds = &[b"community", community_name, &[community.bump]];
     let signer = &[&seeds[..]];
@@ -222,7 +217,6 @@ pub struct MintCommunityTokens<'info> {
     )]
     pub token_mint: Account<'info, Mint>,
 
-    /// CHECK: Treasury PDA
     #[account(
         seeds = [b"treasury", community.key().as_ref()],
         bump

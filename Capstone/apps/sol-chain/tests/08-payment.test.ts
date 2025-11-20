@@ -1,8 +1,3 @@
-/**
- * Payment Module Tests
- * Tests: Create Payment Request, Cancel Payment Request
- */
-
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { SolChain } from "../target/types/sol_chain";

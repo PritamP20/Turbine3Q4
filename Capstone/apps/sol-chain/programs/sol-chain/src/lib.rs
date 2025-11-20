@@ -12,7 +12,6 @@ use instructions::*;
 pub mod sol_chain {
     use super::*;
 
-    // Community instructions
     pub fn initialize_community(
         ctx: Context<InitializeCommunity>,
         community_name: String,

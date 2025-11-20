@@ -1,8 +1,3 @@
-/**
- * Community Module Tests
- * Tests: Initialize Community, Update Config
- */
-
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { SolChain } from "../target/types/sol_chain";
@@ -17,7 +12,7 @@ describe("Community Module", () => {
   const program = anchor.workspace.SolChain as Program<SolChain>;
   
   const admin = provider.wallet as anchor.Wallet;
-  const communityName = "TestDAO"; // Shared across all tests
+  const communityName = "TestDAO"; 
   const tokenSymbol = "TEST";
   const tokenDecimals = 9;
   const governanceThreshold = 51;

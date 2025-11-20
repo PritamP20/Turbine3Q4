@@ -1,8 +1,3 @@
-/**
- * Member Module Tests
- * Tests: Register Member, Update Metadata
- */
-
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { SolChain } from "../target/types/sol_chain";

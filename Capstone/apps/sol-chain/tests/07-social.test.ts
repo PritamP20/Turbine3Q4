@@ -1,8 +1,3 @@
-/**
- * Social Module Tests
- * Tests: Connections, Interactions, Reputation
- */
-
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { SolChain } from "../target/types/sol_chain";

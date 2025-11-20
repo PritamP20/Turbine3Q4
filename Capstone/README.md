@@ -1,135 +1,304 @@
-# Turborepo starter
+# Sol-Chain
 
-This Turborepo starter is maintained by the Turborepo core team.
+A blockchain-based community management platform built on Solana. Sol-Chain enables communities to create custom tokens, manage memberships with NFTs, implement on-chain governance, organize events, and facilitate peer-to-peer interactions with NFC card integration.
 
-## Using this example
+## Overview
 
-Run the following command:
+Sol-Chain is a full-stack decentralized application consisting of a Solana smart contract (program) and a Next.js web interface. It provides communities with tools to manage their own tokenized ecosystems, complete with governance, events, reputation systems, and physical NFC card authentication.
 
-```sh
-npx create-turbo@latest
-```
+**Program ID (Devnet):** `69MnDd6Pk6LKMLvTXozWVbEN1SurUgg8ZixuY9bYDC1y`
 
-## What's inside?
+## Key Features
 
-This Turborepo includes the following packages/apps:
+- **Custom SPL Tokens** - Each community has its own fungible token
+- **NFT Memberships** - Membership represented as NFTs from a collection
+- **NFC Integration** - Physical card authentication for events and interactions
+- **On-chain Governance** - Token-weighted voting on proposals
+- **Event Management** - Create events, track attendance, distribute rewards
+- **Social Graph** - Member connections and interaction tracking
+- **Payment Requests** - Peer-to-peer payment system within communities
+- **Reputation System** - On-chain reputation scores based on participation
+- **Treasury Management** - Community-controlled token treasury
+- **Reward Distribution** - Automated reward claims for active members
 
-### Apps and Packages
+## Project Structure
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+This is a Turborepo monorepo containing the following workspaces:
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+sol-chain/
+├── apps/
+│   ├── frontend/          # Next.js web application
+│   └── sol-chain/         # Solana program (Anchor)
+├── packages/
+│   ├── eslint-config/     # Shared ESLint configurations
+│   ├── typescript-config/ # Shared TypeScript configurations
+│   └── ui/                # Shared React component library
+├── test-ledger/           # Local Solana test validator data
+└── ARCHITECTURE.md        # Detailed program architecture
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+### Apps
 
+#### `apps/frontend`
+Next.js 16 web application providing the user interface for Sol-Chain.
+
+**Tech Stack:**
+- Next.js 16 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Solana Web3.js
+- Anchor Framework
+- Wallet Adapter (Phantom, Solflare, etc.)
+- TanStack Query (React Query)
+
+**Features:**
+- Wallet connection and authentication
+- Community creation and management
+- Member registration and profiles
+- Token transfers and balance tracking
+- Governance proposal creation and voting
+- Event creation and attendance tracking
+- NFC card management
+- Payment request system
+
+#### `apps/sol-chain`
+Solana program (smart contract) written in Rust using the Anchor framework.
+
+**Tech Stack:**
+- Rust
+- Anchor Framework 0.31.1
+- SPL Token Program
+- Solana SDK
+
+**Program Features:**
+- 32 instructions across 10 categories
+- 11 PDA account types
+- Custom token minting and management
+- NFT membership system
+- Governance with voting
+- Event and attendance tracking
+- NFC card authentication
+- Social connections and reputation
+- Payment requests and settlements
+- Treasury operations
+
+### Packages
+
+#### `packages/ui`
+Shared React component library used across frontend applications.
+
+#### `packages/eslint-config`
+Shared ESLint configurations for consistent code style.
+
+#### `packages/typescript-config`
+Shared TypeScript configurations for type checking.
+
+## Prerequisites
+
+- Node.js >= 18
+- npm 11.5.1 or later
+- Rust and Cargo (for Solana program development)
+- Solana CLI tools
+- Anchor CLI 0.31.1
+
+## Getting Started
+
+### Installation
+
+Clone the repository and install dependencies:
+
+```bash
+git clone <repository-url>
+cd sol-chain
+npm install
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+### Development
+
+Run all apps in development mode:
+
+```bash
+npm run dev
 ```
 
-### Develop
+Run a specific app:
 
-To develop all apps and packages, run the following command:
+```bash
+# Frontend only
+npm run dev --filter=frontend
 
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+# Solana program tests
+npm run test --filter=sol-chain
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+### Building
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+Build all apps and packages:
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+```bash
+npm run build
 ```
 
-### Remote Caching
+Build a specific app:
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+```bash
+npm run build --filter=frontend
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### Linting and Formatting
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+```bash
+# Lint all packages
+npm run lint
 
+# Format code
+npm run format
+
+# Type checking
+npm run check-types
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+## Working with the Solana Program
+
+### Testing
+
+The Solana program includes comprehensive test suites:
+
+```bash
+cd apps/sol-chain
+
+# Run tests on local validator
+npm run test:local
+
+# Run tests on devnet
+npm run test:devnet
+
+# Run all test suites on devnet
+npm run test:devnet:all
+
+# Full test with build and deploy
+npm run test:full
 ```
 
-## Useful Links
+### Deployment
 
-Learn more about the power of Turborepo:
+The program is currently deployed on Solana Devnet. To deploy updates:
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+```bash
+cd apps/sol-chain
+anchor build
+anchor deploy --provider.cluster devnet
+```
+
+### Local Development
+
+Start a local Solana test validator:
+
+```bash
+solana-test-validator
+```
+
+The `test-ledger/` directory contains the local validator state and logs.
+
+## Working with the Frontend
+
+### Running Locally
+
+```bash
+cd apps/frontend
+npm run dev
+```
+
+The frontend will be available at `http://localhost:3000`.
+
+### Environment Configuration
+
+Create a `.env.local` file in `apps/frontend/`:
+
+```env
+NEXT_PUBLIC_SOLANA_NETWORK=devnet
+NEXT_PUBLIC_PROGRAM_ID=69MnDd6Pk6LKMLvTXozWVbEN1SurUgg8ZixuY9bYDC1y
+```
+
+### Building for Production
+
+```bash
+cd apps/frontend
+npm run build
+npm run start
+```
+
+## Architecture
+
+For detailed information about the Solana program architecture, including:
+- Account structures (11 PDA types)
+- Instruction set (32 instructions)
+- Token economics
+- Data flow diagrams
+- Security features
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md)
+
+## Technology Stack
+
+**Blockchain:**
+- Solana (Devnet)
+- Anchor Framework
+- SPL Token Program
+- Rust
+
+**Frontend:**
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Solana Web3.js
+
+**Development:**
+- Turborepo (monorepo management)
+- ESLint (linting)
+- Prettier (formatting)
+- TypeScript (type safety)
+
+## Project Scripts
+
+From the root directory:
+
+```bash
+npm run dev          # Start all apps in development mode
+npm run build        # Build all apps and packages
+npm run lint         # Lint all packages
+npm run format       # Format code with Prettier
+npm run check-types  # Run TypeScript type checking
+```
+
+## Deployment
+
+**Frontend:** Deployed on Vercel (configuration in `vercel.json`)
+
+**Solana Program:** Deployed on Solana Devnet
+- Program ID: `69MnDd6Pk6LKMLvTXozWVbEN1SurUgg8ZixuY9bYDC1y`
+- Explorer: [View on Solana Explorer](https://explorer.solana.com/address/69MnDd6Pk6LKMLvTXozWVbEN1SurUgg8ZixuY9bYDC1y?cluster=devnet)
+
+## Contributing
+
+This is a monorepo managed by Turborepo. When contributing:
+
+1. Make changes in the appropriate workspace (`apps/*` or `packages/*`)
+2. Run tests and linting before committing
+3. Follow the existing code style and conventions
+4. Update documentation as needed
+
+## Resources
+
+- [Solana Documentation](https://docs.solana.com/)
+- [Anchor Framework](https://www.anchor-lang.com/)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Turborepo Documentation](https://turborepo.com/docs)
+- [Solana Web3.js](https://solana-labs.github.io/solana-web3.js/)
+
+## License
+
+ISC
